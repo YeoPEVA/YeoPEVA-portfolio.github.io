@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 사이트의 "문서 + 헤어라인" 모티프. 각진 모서리(rx=2)와
+       러스트 악센트로 본문 디자인 언어를 그대로 따릅니다. -->
+  <rect width="32" height="32" rx="2" fill="#14161a"/>
+  <rect x="7" y="4" width="18" height="24" fill="none" stroke="#e9ebee" stroke-width="2"/>
+  <rect x="11" y="10" width="10" height="2" fill="#e2794c"/>
+  <rect x="11" y="16" width="10" height="2" fill="#8b9299"/>
+  <rect x="11" y="21" width="6"  height="2" fill="#8b9299"/>
+</svg>

@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# 증빙 이미지는 포트폴리오를 열어 본 사람에게만 필요합니다.
+# 직접 링크로는 그대로 열리지만, 이미지 검색에 성명·소속이 수집되지 않게 크롤링만 막습니다.
+# 색인을 원하면 아래 두 줄을 지우면 됩니다.
+Disallow: /assets/reports/
+Disallow: /assets/resume/
+
+# 유지보수 문서와 빌드 설정은 방문자용이 아닙니다. Pages 는 저장소의 모든 파일을
+# 서빙하므로 접근 자체는 막을 수 없고, 검색 색인만 제외합니다.
+Disallow: /README.md
+Disallow: /assets/reports/README.md
+Disallow: /nginx.conf
+Disallow: /Dockerfile
+Disallow: /docker-compose.yml
+
+Sitemap: https://info.yeopeva.me/sitemap.xml

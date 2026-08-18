@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이창엽 (Changyeob Lee) | DFIR 디지털 포렌식·침해사고대응</title>
+<meta name="description" content="디지털 포렌식과 침해사고대응(DFIR)을 중심으로 성장하는 정보보호 전공생 이창엽의 포트폴리오입니다.">
+<meta name="theme-color" content="#e9e9e5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
+
+<link rel="canonical" href="https://info.yeopeva.me/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://info.yeopeva.me/">
+<meta property="og:title" content="이창엽 (Changyeob Lee) | DFIR 디지털 포렌식·침해사고대응">
+<meta property="og:description" content="디지털 포렌식과 침해사고대응(DFIR)을 중심으로 성장하는 정보보호 전공생의 포트폴리오">
+<meta property="og:image" content="https://info.yeopeva.me/assets/images/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="이창엽 — 디지털 포렌식 / 침해사고대응 포트폴리오">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "이창엽",
+  "alternateName": "Changyeob Lee",
+  "url": "https://info.yeopeva.me/",
+  "image": "https://info.yeopeva.me/assets/images/og-card.jpg",
+  "jobTitle": "정보보호학과 학부생",
+  "description": "디지털 포렌식과 침해사고대응(DFIR)을 중심으로 역량을 쌓아온 정보보호 전공 학부생",
+  "email": "mailto:lcy606@naver.com",
+  "sameAs": [
+    "https://github.com/YeoPEVA",
+    "https://www.linkedin.com/in/changyeob-lee-yeopeva",
+    "https://noperfectsecurity.tistory.com/",
+    "https://www.postype.com/@yeopeva",
+    "https://cv.yeopeva.me"
+  ],
+  "alumniOf": [
+    { "@type": "CollegeOrUniversity", "name": "순천향대학교" },
+    { "@type": "CollegeOrUniversity", "name": "대구가톨릭대학교" }
+  ],
+  "knowsAbout": [
+    "디지털 포렌식", "침해사고대응", "악성코드 분석", "YARA",
+    "Windows Artifact 분석", "보안 관제", "DevSecOps"
+  ]
+}
+</script>
+
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- 외부 폰트를 그냥 불러오면 렌더를 460ms 막습니다. media 스왑으로 비차단 로드하되,
+     preload 로 우선순위를 올립니다. preload 없이 media="print" 만 쓰면 요청이 저우선순위로
+     밀려 모바일에서 LCP 가 11초까지 튀었습니다. JS 가 없으면 noscript 로 평소처럼 불러옵니다. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap">
+<link rel="preload" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap">
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+</noscript>
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">본문 바로가기</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark">CL</span>
+      <span class="brand-name">이창엽 <em>Changyeob&nbsp;Lee</em></span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="주 메뉴">
+      <a href="#about" class="nav-link">소개</a>
+      <a href="#skills" class="nav-link">기술</a>
+      <a href="#experience" class="nav-link">경험</a>
+      <a href="#projects" class="nav-link">프로젝트</a>
+      <a href="#awards" class="nav-link">수상</a>
+      <a href="#publications" class="nav-link">논문</a>
+      <a href="#education" class="nav-link">교육</a>
+      <a href="#contact" class="nav-link">연락처</a>
+    </nav>
+
+    <div class="header-actions">
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="라이트/다크 모드 전환" title="테마 전환">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      </button>
+      <button id="navToggle" class="icon-btn nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- MASTHEAD -->
+  <section class="masthead" id="top">
+    <div class="container">
+      <p class="filing reveal">
+        <span class="ref">DIGITAL FORENSICS / INCIDENT RESPONSE</span>
+        <span>순천향대학교 정보보호학과 · KST GMT+9</span>
+      </p>
+      <span class="rule masthead-rule"></span>
+
+      <div data-lines>
+        <h1 class="masthead-name mask"><span>이창엽</span></h1>
+        <p class="masthead-latin mask"><span>Changyeob Lee <b>—</b> 디지털 포렌식 · 침해사고대응</span></p>
+      </div>
+
+      <div class="masthead-body">
+        <div class="masthead-main">
+          <p class="masthead-statement reveal">
+            흔적을 따라 원인을 좁혀가고,<br class="br-wide">
+            그 과정을 <em>다시 밟을 수 있게</em> 남기는
+            <span class="keep">일을&nbsp;합니다.</span>
+          </p>
+          <p class="masthead-lead reveal">
+            Windows 아티팩트와 MFT 분석, 포렌식 CTF를 중심으로 훈련해 왔습니다.
+            <span class="keep">분석은&nbsp;결론보다</span> 근거의 순서가 중요하다고 생각해,
+            재현 가능한 절차와 읽히는 보고서로 정리하는 것을 항상 함께 다룹니다.
+          </p>
+          <p class="masthead-actions reveal">
+            <a href="assets/resume/resume_dfir_ko.pdf" class="btn btn-primary" download>이력서 (PDF)</a>
+            <a href="assets/resume/resume_dfir_en.pdf" class="btn" download>Resume (EN)</a>
+            <a href="https://cv.yeopeva.me" class="btn btn-ext" target="_blank" rel="noopener">CV 사이트</a>
+            <a href="#contact" class="btn">연락하기</a>
+          </p>
+        </div>
+
+        <aside class="masthead-aside" aria-label="활동 현황">
+          <p class="aside-label reveal">현재 진행 중</p>
+          <ul class="mini-ledger" data-stagger>
+            <li class="reveal"><a href="experience/hspace.html">HSPACE FORENSIC LAB</a><span class="dots" aria-hidden="true"></span><time>2025.10 –</time></li>
+            <li class="reveal"><a href="experience/sch-security.html">SCH 사이버보안연구센터</a><span class="dots" aria-hidden="true"></span><time>2025.09 –</time></li>
+            <li class="reveal"><a href="experience/busan-mentor.html">부산소프트웨어마이스터고</a><span class="dots" aria-hidden="true"></span><time>2023.04 –</time></li>
+          </ul>
+
+          <p class="aside-label reveal">최근 수상</p>
+          <ul class="mini-ledger" data-stagger>
+            <li class="reveal"><a href="awards/digital-criminal-finder.html">디지털 범인을 찾아라 제11회<em>장려상</em></a><span class="dots" aria-hidden="true"></span><time>2025.12</time></li>
+            <li class="reveal"><a href="awards/kfsi-academy-2025.html">금융보안아카데미 2025<em>최우수상</em></a><span class="dots" aria-hidden="true"></span><time>2025.11</time></li>
+            <li class="reveal"><a href="awards/schu-ai-sw-festival-2025.html">SCHU AI · SW Festival<em>대상</em></a><span class="dots" aria-hidden="true"></span><time>2025.11</time></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">01</span>
+        <span class="sec-meta">Profile</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">소개</h2>
+        <span class="rule"></span>
+
+        <div class="about-grid">
+          <figure class="about-photo reveal">
+            <img src="assets/images/profile.jpeg" alt="이창엽 증명사진" width="600" height="800" loading="lazy">
+            <figcaption class="about-caption">이창엽 / Changyeob&nbsp;Lee<br>정보보호학과 재학</figcaption>
+          </figure>
+
+          <div>
+            <ul class="summary-list" data-stagger>
+              <li class="reveal">디지털 포렌식과 침해사고 분석을 중심으로 역량을 쌓아온 정보보호 전공 학부생입니다.</li>
+              <li class="reveal">Windows 아티팩트, MFT 분석, 포렌식 CTF 경험을 바탕으로 흔적을 따라 원인을 좁혀가는 훈련을 해왔습니다.</li>
+              <li class="reveal">분석 결과를 재현 가능한 절차와 읽히는 보고서로 정리하는 것을 중요하게 생각합니다.</li>
+            </ul>
+
+            <p class="tally reveal">
+              <span>수상 <b>23</b></span>
+              <span>발표·논문 <b>6</b></span>
+              <span>연구·커뮤니티 <b>6</b></span>
+              <span>자격 <b>5</b></span>
+            </p>
+
+            <p class="about-links reveal">
+              <a href="https://github.com/YeoPEVA" target="_blank" rel="noopener">GitHub</a>
+              <a href="https://www.linkedin.com/in/changyeob-lee-yeopeva" target="_blank" rel="noopener">LinkedIn</a>
+              <a href="https://noperfectsecurity.tistory.com/" target="_blank" rel="noopener">기술 블로그</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section section-alt" id="skills">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">02</span>
+        <span class="sec-meta">4개 영역</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">기술 &amp; 관심 분야</h2>
+        <span class="rule"></span>
+
+        <div class="skill-ledger" data-stagger>
+          <div class="skill-row reveal">
+            <div class="skill-row-head">
+              <span class="skill-index">01</span>
+              <h3>디지털 포렌식 · 침해대응</h3>
+              <span class="skill-level">주력</span>
+            </div>
+            <div class="skill-body">
+              <p class="skill-note">Windows 아티팩트(MFT · Registry · Prefetch · Event Log)를 교차 검증해 유입 경로와 실행 흔적을 좁히고, 사고 흐름을 타임라인으로 재구성합니다.</p>
+              <div class="tag-list">
+                <span class="tag">Windows 포렌식</span>
+                <span class="tag">MFT 분석</span>
+                <span class="tag">타임라인 재구성</span>
+                <span class="tag">침해사고 분석</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-row reveal">
+            <div class="skill-row-head">
+              <span class="skill-index">02</span>
+              <h3>악성코드 분석 · 탐지 룰</h3>
+            </div>
+            <div class="skill-body">
+              <p class="skill-note">정적·동적 분석으로 행위를 확인하고, 확인한 특징을 탐지 룰로 옮깁니다.</p>
+              <div class="tag-list">
+                <span class="tag">정적 분석</span>
+                <span class="tag">동적 분석</span>
+                <span class="tag">PE 구조</span>
+                <span class="tag">YARA</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-row reveal">
+            <div class="skill-row-head">
+              <span class="skill-index">03</span>
+              <h3>보안 운영</h3>
+            </div>
+            <div class="skill-body">
+              <p class="skill-note">공군 정보보호병으로 보안 장비 관리와 관제, 정책·차단 운영, 훈련 대응을 수행했습니다.</p>
+              <div class="tag-list">
+                <span class="tag">보안 관제</span>
+                <span class="tag">장비 관리</span>
+                <span class="tag">정책 · 차단 관리</span>
+                <span class="tag">훈련 대응</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-row reveal">
+            <div class="skill-row-head">
+              <span class="skill-index">04</span>
+              <h3>엔지니어링</h3>
+            </div>
+            <div class="skill-body">
+              <p class="skill-note">분석과 점검을 자동화하는 쪽에 씁니다. IaC 룰셋 기반 정책 감사 도구를 만들었습니다.</p>
+              <div class="tag-list">
+                <span class="tag">Python</span>
+                <span class="tag">Backend</span>
+                <span class="tag">DevSecOps</span>
+                <span class="tag">IaC</span>
+                <span class="tag">AWS</span>
+                <span class="tag">OpenStack</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <dl class="skill-foot reveal">
+          <dt>관심 분야</dt><dd>CTI · DevSecOps · 백엔드</dd>
+          <dt>언어</dt><dd>한국어 (모국어) · 영어 (중급) · 일본어 (중급)</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section" id="experience">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">03</span>
+        <span class="sec-meta">6건 · 2017–현재</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">주요 경험</h2>
+        <span class="rule"></span>
+
+        <div class="case-log" data-stagger>
+          <a class="case-row reveal" href="experience/hspace.html">
+            <span class="case-when">
+              <span class="case-index">01</span>
+              <span class="case-date">2025.10 – 현재</span>
+              <span class="case-tag">DFIR</span>
+            </span>
+            <div class="case-body">
+              <h3>HSPACE FORENSIC LAB <span class="role">· Member (HDFLAB)</span></h3>
+              <p>디지털 포렌식 및 침해사고대응 분야의 연구 커뮤니티 활동을 이어가고 있습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="case-row reveal" href="experience/sch-security.html">
+            <span class="case-when">
+              <span class="case-index">02</span>
+              <span class="case-date">2025.09 – 현재</span>
+              <span class="case-tag">Malware</span>
+            </span>
+            <div class="case-body">
+              <h3>SCH 사이버보안연구센터 <span class="role">· Member</span></h3>
+              <p>악성코드와 익스플로잇 킷 분석을 중심으로 보안 연구 활동을 수행하고 있습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="case-row reveal" href="experience/busan-mentor.html">
+            <span class="case-when">
+              <span class="case-index">03</span>
+              <span class="case-date">2023.04 – 현재</span>
+              <span class="case-tag">Education</span>
+            </span>
+            <div class="case-body">
+              <h3>부산소프트웨어마이스터고 <span class="role">· 전공동아리 멘토 · 산학겸임교사</span></h3>
+              <p>2023년부터 전공동아리 멘토로 활동하고 있으며, 2026년에는 산학겸임교사로 정보보호관리 교과목을 담당했습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="case-row reveal" href="experience/ikeeper.html">
+            <span class="case-when">
+              <span class="case-index">04</span>
+              <span class="case-date">2023.09 – 2024.07</span>
+              <span class="case-tag">CERT / Dev</span>
+            </span>
+            <div class="case-body">
+              <h3>i-Keeper <span class="role">· CERT팀 / DEV팀 Member</span></h3>
+              <p>analyzeMFT 기반 MFT Parser 분석·개선 프로젝트를 수행하고, DEV팀 장비부장으로도 활동했습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="case-row reveal" href="experience/anti-root.html">
+            <span class="case-when">
+              <span class="case-index">05</span>
+              <span class="case-date">2017.05 – 2023.02</span>
+              <span class="case-tag">Community</span>
+            </span>
+            <div class="case-body">
+              <h3>Anti-root <span class="role">· 팀장 및 설립자</span></h3>
+              <p>영남권 정보보호 연구팀을 설립·운영하며 자체 세미나·프로젝트·발표 활동을 주관했습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="case-row reveal" href="experience/rokaf.html">
+            <span class="case-when">
+              <span class="case-index">06</span>
+              <span class="case-date">2021.04 – 2023.01</span>
+              <span class="case-tag">Security Ops</span>
+            </span>
+            <div class="case-body">
+              <h3>대한민국 공군 <span class="role">· 정보보호병 825기</span></h3>
+              <p>실운영 보안 환경에서 정보보호 장비 관리, 보안 관제, 보안 정책·차단 관리 업무를 수행했습니다.</p>
+              <span class="case-note">제44회 공군 정보통신 경연대회 해킹방어부문 최우수상(공군참모총장)</span>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="appendix-link reveal">
+          <a href="experience/other-activities.html">그 외 활동 내역 4건 더 보기<span aria-hidden="true"> →</span></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section section-alt" id="projects">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">04</span>
+        <span class="sec-meta">6건 · 2020–2025</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">핵심 프로젝트 &amp; 활동</h2>
+        <span class="rule"></span>
+
+        <div class="case-log" data-stagger>
+          <a class="case-row reveal" href="projects/malware-yara.html">
+            <span class="case-when">
+              <span class="case-index">01</span>
+              <span class="case-date">2025.09 – 현재</span>
+              <span class="case-tag">Malware</span>
+            </span>
+            <div class="case-body">
+              <h3>악성코드 분석 &amp; YARA 룰 작성 <span class="role">· SCH 사이버보안연구센터</span></h3>
+              <p>악성코드 샘플에 대해 정적·동적 분석을 수행하며 흔적을 확인하고 있습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="case-row reveal" href="projects/stellar-agent.html">
+            <span class="case-when">
+              <span class="case-index">02</span>
+              <span class="case-date">2025.03 – 2025.12</span>
+              <span class="case-tag">AI Agent</span>
+            </span>
+            <div class="case-body">
+              <h3>Stellar-Agent <span class="role">· IaC-Rule Set &amp; MCP 기반 정책 감사 도구</span></h3>
+              <p>IaC Rule Set과 MCP 기반 AI로 보안 정책 감사, SBOM 및 보고서 생성을 자동화하는 하이브리드 DevSecOps 프레임워크입니다.</p>
+              <span class="case-note">2025 한국데이터사이언스학회 동계 종합학술대회 발표</span>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="case-row reveal" href="projects/dfir-competitions.html">
+            <span class="case-when">
+              <span class="case-index">03</span>
+              <span class="case-date">2022.12 – 2025.12</span>
+              <span class="case-tag">Incident Response</span>
+            </span>
+            <div class="case-body">
+              <h3>디지털 포렌식 · 침해대응 경진대회 분석 <span class="role">· 디지털 증거 분석 · 타임라인 재구성</span></h3>
+              <p>복수 아티팩트를 교차 검증해 침해사고 흐름을 분석하고 보고서로 정리했습니다.</p>
+              <span class="case-note">우수상 · 장려상 다수</span>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="case-row reveal" href="projects/kfsi-academy.html">
+            <span class="case-when">
+              <span class="case-index">04</span>
+              <span class="case-date">2025.07.08 – 2025.11.07</span>
+              <span class="case-tag">DFIR · CTF</span>
+            </span>
+            <div class="case-body">
+              <h3>금융보안아카데미 2025 <span class="role">· 사이버 위협 대응·분석 과정 (3기)</span></h3>
+              <p>금융권 위협 분석·대응 절차를 학습하고 DFIR 중심 CTF를 수행했습니다.</p>
+              <span class="case-note">최우수상 (금융보안원장)</span>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="case-row reveal" href="projects/mft-parser.html">
+            <span class="case-when">
+              <span class="case-index">05</span>
+              <span class="case-date">2023.09 – 2024.02</span>
+              <span class="case-tag">Forensic Tool</span>
+            </span>
+            <div class="case-body">
+              <h3>MFT Parser 분석 &amp; 개선 <span class="role">· i-Keeper, Python / analyzeMFT</span></h3>
+              <p>analyzeMFT 기반 MFT Parser의 구조와 파싱 결과를 검토하고 도구 개선에 참여했습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="case-row reveal" href="projects/bob-platform.html">
+            <span class="case-when">
+              <span class="case-index">06</span>
+              <span class="case-date">2020.09 – 2020.12</span>
+              <span class="case-tag">Backend</span>
+            </span>
+            <div class="case-body">
+              <h3>중고거래사기방지 플랫폼 <span class="role">· BoB 9기, Python / PHP</span></h3>
+              <p>중고거래 사기 탐지 및 사용자 알림 플랫폼을 구현하고, 결과를 KCI 등재 논문으로 확장했습니다.</p>
+            </div>
+            <span class="case-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section class="section" id="awards">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">05</span>
+        <span class="sec-meta">23건 · 2017–2025</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">수상 &amp; 성과</h2>
+        <span class="rule"></span>
+
+        <div class="award-list" data-stagger>
+          <a class="award-row reveal" href="awards/digital-criminal-finder.html">
+            <span class="award-badge">장려상</span>
+            <span class="award-main">
+              <span class="award-title">제8~11회 디지털 범인을 찾아라 경진대회</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">한국포렌식학회장 · 2022 – 2025 · 4회 수상</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/kfsi-academy-2025.html">
+            <span class="award-badge">최우수상</span>
+            <span class="award-main">
+              <span class="award-title">금융보안아카데미 2025</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">금융보안원장 · 2025.11.07</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/schu-ai-sw-festival-2025.html">
+            <span class="award-badge">대상</span>
+            <span class="award-main">
+              <span class="award-title">2025 SCHU AI &amp; SW Festival SW 프로젝트 경진대회</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">순천향대학교 SW중심대학사업단장 · 2025.11.05</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/yeongnam-cyber-defense.html">
+            <span class="award-badge">우수상</span>
+            <span class="award-main">
+              <span class="award-title">제1회 영남권 사이버 공격 방어 대회 (대학팀 부문)</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">한국주택금융공사 사장 · 2025.10.15</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/honam-cybersecurity-2025.html">
+            <span class="award-badge">우수상</span>
+            <span class="award-main">
+              <span class="award-title">2025 제6회 호남 사이버보안 콘퍼런스 침해대응 경진대회</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">한국인터넷진흥원장 · 2025.09.18</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/creative-challenge-2024.html">
+            <span class="award-badge">최우수팀</span>
+            <span class="award-main">
+              <span class="award-title">2024-2 창의도전학기 사례발표회 (Stellar Stellar)</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">대구가톨릭대학교 대학일자리플러스센터장 · 2024.12.05</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/topcit-2024.html">
+            <span class="award-badge">우수상</span>
+            <span class="award-main">
+              <span class="award-title">2024 제22회 TOPCIT 정기평가</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">대구가톨릭대학교 SW중심대학사업단장 · 2024.11.11</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/honam-cybersecurity-2024.html">
+            <span class="award-badge">장려상</span>
+            <span class="award-main">
+              <span class="award-title">2024 제5회 호남사이버보안컨퍼런스 대학간 침해대응/분석 경진대회</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">한국정보보호학회 호남지부장 · 2024.10.02</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/korea-vietnam-sw-coding.html">
+            <span class="award-badge">대상</span>
+            <span class="award-main">
+              <span class="award-title">한-베트남 제2회 국제SW코딩 경진대회 (IoT 특화코딩)</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">경북ICT융합산업진흥협회 · 2024.06.18</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/rokaf-hacking-competition.html">
+            <span class="award-badge">최우수상</span>
+            <span class="award-main">
+              <span class="award-title">제44회 공군 정보통신 경연대회 (해킹방어부문)</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">공군참모총장 · 2022.10.26</span>
+          </a>
+
+          <a class="award-row reveal" href="awards/kdfs-challenge-2020.html">
+            <span class="award-badge">장려상</span>
+            <span class="award-main">
+              <span class="award-title">2020년도 한국디지털포렌식학회 디지털포렌식 챌린지</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="award-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="award-org">한국디지털포렌식학회장 · 2020.11.20</span>
+          </a>
+        </div>
+
+        <p class="appendix-link reveal">
+          <a href="awards/other-awards.html">그 외 수상 내역 9건 더 보기<span aria-hidden="true"> →</span></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section class="section section-alt" id="publications">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">06</span>
+        <span class="sec-meta">6건 · KCI 1</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">발표 &amp; 논문</h2>
+        <span class="rule"></span>
+
+        <div class="pub-list" data-stagger>
+          <a class="pub-item reveal" href="publications/stellar-agent-paper.html">
+            <h3>Stellar-Agent: IaC 룰셋 및 모델 컨텍스트 프로토콜(MCP)을 통합한 AI 에이전트 기반 하이브리드 DevSecOps 정책 감사 프레임워크</h3>
+            <p class="pub-authors">정준영, <b>이창엽</b>, 이정민, 이유식</p>
+            <p class="pub-conf">2025 한국데이터사이언스학회 동계 종합학술대회 · 2025.12.18 · 논문번호 0032, p.118</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="pub-item reveal" href="publications/online-fraud-prevention.html">
+            <h3>온라인 직거래 환경에서의 사기 피해에 대한 사전 예방 필요성 제언: 사기 판별 요소를 중심으로</h3>
+            <p class="pub-authors">현장호, <b>이창엽</b>, 임다연, 최원영, 이현호, 이진우</p>
+            <p class="pub-conf">KCI 등재 · 경찰학연구 21(1), pp.249-272, 2021.03 · DOI 10.22816/polsci.2021.21.1.009</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="pub-item reveal" href="publications/secondhand-platform-proposal.html">
+            <h3>중고거래사기방지 플랫폼 제안</h3>
+            <p class="pub-authors">현장호, <b>이창엽</b>, 임다연, 이현호, 이진우</p>
+            <p class="pub-conf">한국정보보호학회 동계학술대회 · 2020</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="pub-item reveal" href="publications/apt-incident-review.html">
+            <h3>국내 APT 및 기업 보안 사고에 대한 고찰</h3>
+            <p class="pub-authors"><b>이창엽</b>, 이진우, 이정훈, 노무승, 박현상</p>
+            <p class="pub-conf">한국정보보호학회 동계학술대회 · 2019</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="pub-item reveal" href="publications/card-hacking.html">
+            <h3>카드 해킹의 문제점과 대비방안</h3>
+            <p class="pub-authors">이진우, 이정훈, <b>이창엽</b>, 노무승, 오현수</p>
+            <p class="pub-conf">한국정보보호학회 동계학술대회 · 2018</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="pub-item reveal" href="publications/rfid-skimming.html">
+            <h3>RFID Skimming 해킹 기법에 관한 고찰</h3>
+            <p class="pub-authors">김건우, 김태현, 성유원, 여상준, 이진우, <b>이창엽</b>, 이달원</p>
+            <p class="pub-conf">한국정보보호학회 동계학술대회 · 2017</p>
+          <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section" id="education">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">07</span>
+        <span class="sec-meta">4곳 · 유효 자격 5</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">교육</h2>
+        <span class="rule"></span>
+
+        <div class="edu-list" data-stagger>
+          <a class="edu-item reveal" href="education/sch-university.html">
+            <div class="edu-time">2025.02 – 현재</div>
+            <div class="edu-body">
+              <h3>순천향대학교 <span class="edu-degree">SW융합대학 정보보호학과</span></h3>
+              <p>학점 3.55/4.5 (3-2 종료 기준) · 제4기 SW프런티어 활동 · 2025 SCHU AI &amp; SW Festival SW 프로젝트 경진대회 대상</p>
+            </div>
+            <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="edu-item reveal" href="education/kfsi-academy-edu.html">
+            <div class="edu-time">2025.07.08 – 2025.11.07</div>
+            <div class="edu-body">
+              <h3>금융보안원 <span class="edu-degree">금융보안아카데미 3기 · 사이버 위협 대응·분석 과정</span></h3>
+              <p>금융권 위협 분석 및 대응 절차 학습, CTF 디지털포렌식 문제 중심 참여 · 최우수상 수상</p>
+            </div>
+            <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="edu-item reveal" href="education/daegu-catholic.html">
+            <div class="edu-time">2020.03 – 2025.02</div>
+            <div class="edu-body">
+              <h3>대구가톨릭대학교 <span class="edu-degree">컴퓨터공학전공 및 사이버 보안 복수 전공</span></h3>
+              <p>전체 평점 3.97/4.50, 전공 평점 4.04/4.50 · TOPCIT 우수상 · 한-베트남 국제SW코딩 경진대회 대상 · 창의도전학기 최우수팀</p>
+            </div>
+            <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="edu-item reveal" href="education/bob-9th.html">
+            <div class="edu-time">2020.06 – 2021.03</div>
+            <div class="edu-body">
+              <h3>한국정보기술연구원 <span class="edu-degree">차세대 보안리더 양성 프로그램(BoB) 9기 · 디지털포렌식 트랙</span></h3>
+              <p>중고거래사기방지플랫폼 제작 · TOP 14 자문단 평가 진출</p>
+            </div>
+            <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="cert-title reveal">자격 &amp; 취득 이력</p>
+        <ul class="cert-list" data-stagger>
+          <li class="reveal"><a href="assets/reports/certificates/aws-saa.jpg" target="_blank" rel="noopener" class="cert-link">AWS Certified Solutions Architect – Associate</a><span class="dots" aria-hidden="true"></span><time>2023.07 – 2026.07 <em class="expired">만료</em></time></li>
+          <li class="reveal"><a href="assets/reports/certificates/digital-forensics.jpg" target="_blank" rel="noopener" class="cert-link">디지털포렌식 2급</a><span class="dots" aria-hidden="true"></span><time>2022.12 – 2028.12</time></li>
+          <li class="reveal"><span>정보기기운용기능사</span><span class="dots" aria-hidden="true"></span><time>2022.10 취득</time></li>
+          <li class="reveal"><a href="assets/reports/certificates/exterro-ace.jpg" target="_blank" rel="noopener" class="cert-link">Exterro ACE (AccessData)</a><span class="dots" aria-hidden="true"></span><time>2022.01 – 2024.01 <em class="expired">만료</em></time></li>
+          <li class="reveal"><a href="assets/reports/certificates/internet-manager.jpg" target="_blank" rel="noopener" class="cert-link">인터넷정보관리사 2급</a><span class="dots" aria-hidden="true"></span><time>2020.10 취득</time></li>
+          <li class="reveal"><a href="assets/reports/certificates/linux-master.jpg" target="_blank" rel="noopener" class="cert-link">리눅스마스터 2급</a><span class="dots" aria-hidden="true"></span><time>2019.10 취득</time></li>
+          <li class="reveal"><a href="assets/reports/certificates/network-admin.jpg" target="_blank" rel="noopener" class="cert-link">네트워크관리사 2급</a><span class="dots" aria-hidden="true"></span><time>2016.12 – 2026.12</time></li>
+        </ul>
+
+        <p class="appendix-link reveal">
+          <a href="education/other-training.html">그 외 교육·훈련 이수 내역 30건 더 보기<span aria-hidden="true"> →</span></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="container section-grid">
+      <div class="section-aside reveal">
+        <span class="sec-num">08</span>
+        <span class="sec-meta">KST GMT+9</span>
+      </div>
+      <div class="section-main">
+        <h2 class="section-title reveal">연락처</h2>
+        <span class="rule"></span>
+
+        <p class="contact-statement reveal">함께 사고를 들여다볼 팀을 찾고 있습니다.</p>
+        <p class="contact-note reveal">디지털 포렌식, 침해사고대응(DFIR), 보안 관제 관련 포지션에 관심이 있습니다.
+          <span class="keep">편하게&nbsp;연락해&nbsp;주세요.</span></p>
+
+        <p class="contact-actions reveal">
+          <button class="btn btn-primary" id="copyEmailBtn" data-email="lcy606@naver.com" type="button">lcy606@naver.com</button>
+          <a href="https://github.com/YeoPEVA" class="btn" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/changyeob-lee-yeopeva" class="btn" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://noperfectsecurity.tistory.com/" class="btn btn-ext" target="_blank" rel="noopener">기술 블로그</a>
+          <a href="https://www.postype.com/@yeopeva" class="btn btn-ext" target="_blank" rel="noopener">회고 블로그</a>
+        </p>
+        <p class="copy-toast" id="copyToast" role="status" aria-live="polite">이메일 주소가 복사되었습니다.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>&copy; <span id="year"></span> Changyeob Lee</p>
+    <button class="back-to-top" id="backToTop" type="button" aria-label="맨 위로 이동">↑ TOP</button>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

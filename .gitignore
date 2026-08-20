@@ -20,3 +20,12 @@ evidence-raw/
 
 # 로컬 미리보기 설정 (Pages 는 모든 추적 파일을 서빙하므로 제외)
 .claude/
+
+# 감사 도구 부산물 — README 5장의 npm/lighthouse 명령이 이 폴더 안에 만듭니다.
+# Pages 는 추적된 모든 파일을 서빙하므로 커밋되면 그대로 공개됩니다.
+node_modules/
+package.json
+package-lock.json
+lh.json
+lh-*.json
+*.report.html

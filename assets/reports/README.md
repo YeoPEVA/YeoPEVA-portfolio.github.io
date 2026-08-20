@@ -26,7 +26,10 @@ assets/reports/publications/stellar-agent-paper_slides.pdf
 
 ## 상세 페이지에 연결하는 방법
 
-모든 상세 페이지는 `doc-body` 아래에 `doc-related` 블록을 넣어 자료를 연결합니다. **세 가지 종류를 지원하며, 화면에서 자동으로 구분되어 표시됩니다.**
+상세 페이지의 자료는 **오른쪽 마지널리아 레일**(`.doc-aside`)에 들어갑니다. 레일은 증빙 플레이트와 `관련 자료` 목록을 담습니다.
+
+- **증빙 이미지**는 아래 "증빙 플레이트" 틀을 쓰세요. 텍스트 링크가 아니라 썸네일로 보여줍니다.
+- **그 밖의 자료**(내부 페이지 · 외부 URL · 파일 다운로드)는 `doc-related-list` 틀을 쓰며, **세 종류가 화면에서 자동으로 구분됩니다.**
 
 | 종류 | 표시 | 마크업 |
 |---|---|---|
@@ -34,7 +37,31 @@ assets/reports/publications/stellar-agent-paper_slides.pdf
 | 외부 URL | `↗` 자동 | `target="_blank" rel="noopener"` |
 | 파일 다운로드 | `↓` 자동 + 배지 테두리 | `download` 속성 |
 
-### 복사해서 쓰는 틀
+### 복사해서 쓰는 틀 ① 증빙 플레이트
+
+썸네일은 `thumbs/` 의 396px WebP 를 쓰고, 링크와 `KB` 표기는 **원본** 기준입니다. `width`/`height` 는 썸네일의 실제 크기이며 빠뜨리면 CLS 가 생깁니다. `alt` 은 비워 둡니다 — 바로 아래 `plate-cap` 이 같은 내용을 담고 있어 반복하면 스크린리더가 두 번 읽습니다.
+
+```html
+<aside class="doc-aside">
+  <p class="doc-aside-title">증빙 자료</p>
+  <ul class="plate-list plate-grid">
+    <li><a class="plate" href="../assets/reports/awards/example.jpg" target="_blank" rel="noopener">
+      <img src="../assets/reports/thumbs/example.webp" alt=""
+           width="396" height="560" loading="lazy" decoding="async">
+      <span class="plate-cap">상장 · 2025.11.05</span>
+      <span class="plate-meta">JPG · 105 KB</span>
+    </a></li>
+  </ul>
+
+  <!-- 관련 자료가 함께 있을 때만 -->
+  <p class="doc-aside-title doc-aside-title-2">관련 자료</p>
+  <ul class="doc-related-list"> … 아래 틀 ② … </ul>
+</aside>
+```
+
+썸네일 생성 명령과 배치 규칙(`plate-grid` vs `plate-row`)은 [`site/README.md`](../../README.md) 3-4-2 에 있습니다.
+
+### 복사해서 쓰는 틀 ② 관련 자료
 
 ```html
 <div class="doc-related">
@@ -72,7 +99,8 @@ assets/reports/publications/stellar-agent-paper_slides.pdf
 - **`<span class="kind">`** 에는 종류를 짧게: `PDF`, `Slide`, `DOI`, `Repo`, `Project`, `Experience`, `Award`, `Paper`, `Education`
 - **`<span class="meta">`** 는 선택 사항. 파일 크기·페이지 수 등을 넣으면 오른쪽에 정렬됩니다. 크기는 아래로 확인하세요.
   ```bash
-  ls -lh assets/reports/awards/kfsi-academy-2025_certificate.pdf
+  # <폴더>/<파일> 을 실제 경로로 바꿔서 실행하세요
+  ls -lh assets/reports/<폴더>/<파일>
   ```
 - 경로는 상세 페이지 기준 **`../`** 로 시작합니다 (`experience/`, `projects/`, `awards/`, `publications/`, `education/` 모두 한 단계 아래).
 - **양방향 연결**을 권장합니다. A→B 를 걸었으면 B→A 도 추가하세요.
@@ -91,13 +119,19 @@ cd site && docker compose up --build -d
 cd site && python3 -c "
 import re,os,glob
 bad=[]
-for f in glob.glob('*/*.html'):
-    d=os.path.dirname(f)
-    for m in re.finditer(r'href=\"([^\"]+)\"', open(f,encoding='utf-8').read()):
-        h=m.group(1).split('#')[0]
-        if not h or h.startswith(('http','mailto','data:')): continue
+# href 뿐 아니라 src 도 봅니다 — 증빙 플레이트의 썸네일이 src 로 들어갑니다.
+for f in glob.glob('*.html') + glob.glob('*/*.html'):
+    d=os.path.dirname(f) or '.'
+    for m in re.finditer(r'(?:href|src)=\"([^\"]+)\"', open(f,encoding='utf-8').read()):
+        h=m.group(1).split('#')[0].split('?')[0]
+        if not h or h.startswith(('http','mailto','data:','/')): continue
         if not os.path.isfile(os.path.normpath(os.path.join(d,h))): bad.append((f,h))
 print('깨진 링크:', bad or '없음')
+# 썸네일이 있어야 하는데 없는 원본 (certificates 는 텍스트 링크만 쓰므로 제외)
+miss=[os.path.basename(j) for j in glob.glob('assets/reports/**/*.jpg',recursive=True)
+      if '/thumbs/' not in j and '/certificates/' not in j
+      and not os.path.isfile('assets/reports/thumbs/'+os.path.basename(j).rsplit('.',1)[0]+'.webp')]
+print('썸네일 누락:', miss or '없음')
 "
 ```
 
@@ -105,14 +139,23 @@ print('깨진 링크:', bad or '없음')
 
 ## 현재 연결 상태 (70장 / 2026.08 기준)
 
-전체 36개 상세 페이지 중 **31개**에 `doc-related` 블록이 있습니다. 내부 페이지 링크, 외부 URL(경찰학연구 DOI), 증빙 이미지 첨부가 섞여 있습니다.
+전체 37개 상세 페이지 중 **32개**에 연결 자료가 있습니다. 내부 페이지 링크, 외부 URL(경찰학연구 DOI), 증빙 이미지가 섞여 있습니다.
 
-블록이 없는 6개 페이지는 근거 있는 연관 항목이 없어 의도적으로 비워 두었습니다 — 없는 관계를 억지로 만들지 않는 것이 원칙입니다.
+증빙 이미지는 **텍스트 링크가 아니라 썸네일 플레이트**로 보여줍니다. 배치는 두 가지입니다.
+
+| 배치 | 쪽수 | 위치 |
+|---|---|---|
+| 오른쪽 마지널리아 레일 (`.doc-aside` + `.plate-grid`) | 28 | 본문 옆 264px |
+| 본문 안 격자 (`.plate-row`) | 3 | 항목마다 증빙이 흩어진 부록 페이지 |
+
+원본 70장(8,251 KB)은 그대로 쓰지 않고 `thumbs/` 의 396px WebP 64장(975 KB)을 표시합니다. 자격증 증빙 6장은 `index.html` 의 점선 리더 목록에서 텍스트 링크로만 쓰므로 썸네일을 만들지 않습니다. **증빙을 추가·교체하면 썸네일을 다시 생성해야 합니다** — 명령은 [`site/README.md`](../../README.md) 3-4-2 에 있습니다.
+
+연결 자료가 없는 5개 페이지는 근거 있는 연관 항목이 없어 의도적으로 비워 두었습니다 — 없는 관계를 억지로 만들지 않는 것이 원칙입니다.
 
 ```
-experience/anti-root.html        experience/busan-mentor.html
-experience/hspace.html           awards/kdfs-challenge-2020.html
-awards/yeongnam-cyber-defense.html   publications/apt-incident-review.html
+experience/anti-root.html          experience/hspace.html
+publications/apt-incident-review.html   publications/card-hacking.html
+publications/rfid-skimming.html
 ```
 
 ## 전수 검수 이력

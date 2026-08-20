@@ -449,7 +449,7 @@ for folder,sec in [('experience','03'),('projects','04')]:
 
 증빙 이미지는 텍스트 링크가 아니라 **썸네일 플레이트**로 보여줍니다. 원본은 새 창으로 열립니다.
 
-**원본을 그대로 쓰면 안 됩니다.** 증빙 원본 70장은 8,251 KB(평균 117 KB)입니다. `assets/reports/thumbs/` 의 396px WebP 는 64장 1,108 KB(평균 17 KB)로, 30장이 걸린 `other-training.html` 이 초기 108 KB만 받고 나머지는 `loading="lazy"` 로 뒤따릅니다.
+**원본을 그대로 쓰면 안 됩니다.** 증빙 원본 70장은 8,251 KB(평균 117 KB)입니다. `assets/reports/thumbs/` 의 396px WebP 는 64장 975 KB(평균 15 KB)로, 30장이 걸린 `other-training.html` 이 초기 108 KB만 받고 나머지는 `loading="lazy"` 로 뒤따릅니다.
 
 **썸네일 생성** — 증빙을 추가·교체하면 반드시 다시 돌리세요.
 
@@ -461,6 +461,9 @@ import glob, os
 W = 396
 for f in sorted(glob.glob('assets/reports/**/*.jpg', recursive=True)):
     if '/thumbs/' in f: continue
+    # 자격증 증빙은 index 의 점선 리더 목록에서 텍스트 링크로만 쓰므로 썸네일을 만들지 않습니다.
+    # 만들어 두면 5장 '미참조 자산' 검사에 계속 걸립니다.
+    if '/certificates/' in f: continue
     out = 'assets/reports/thumbs/' + os.path.basename(f).rsplit('.', 1)[0] + '.webp'
     im = Image.open(f).convert('RGB')
     im.resize((W, round(im.height * W / im.width)), Image.LANCZOS).save(out, 'WEBP', quality=75, method=6)
@@ -526,6 +529,74 @@ EOF
 - 원본을 새 창으로 열 필요가 없으면 `<a>` 없이 `<img>` 만 둡니다.
 - `alt` 는 "무엇을 보여주는 그림인지"를 씁니다. 파일명이나 "스크린샷"만 쓰지 마세요.
 - 스크린샷에 실명·이메일·사번·내부 호스트명·토큰이 찍히지 않았는지 **게시본을 눈으로** 확인하세요. 증빙 이미지와 같은 기준입니다([`assets/reports/README.md`](assets/reports/README.md)).
+
+#### 어느 상세 페이지에 넣을 수 있는가 — 전수 검증 결과
+
+**전체 38쪽 중 37쪽에 넣을 수 있습니다.** 넣을 수 없는 것은 `404.html` 하나뿐이며, 본문 컨테이너(`.doc-body`/`.case-body`)가 없기 때문입니다. `index.html` 도 `.case-body` 가 있어 가능합니다.
+
+각 페이지에 `.doc-figure` 단독 1장과 `.doc-figure-pair` 2장을 실제로 주입해 4개 폭에서 렌더한 결과입니다. **페이지 가로 넘침 0건, 컨테이너 밖으로 삐져나온 그림 0건, 오른쪽 레일 깨짐 0건.**
+
+| 페이지 유형 | 쪽수 | 1440px | 1100px | 900px | 430px | 원본 권장 |
+|---|---|---|---|---|---|---|
+| 상세 — 오른쪽 레일(`.doc-layout`) · 1열 | 33 | 720px | 720px | 720px | 390px | **1080px** |
+| 상세 — 부록 갤러리 | 3 | 716–736px | 716–736px | **802px** | 348px | **1200px** |
+| `index.html` 본문 목록 | 1 | 684px | 664px | 720px | 390px | 1080px |
+
+- 갤러리 3쪽이 720px 을 넘는 이유는 `<article class="doc" style="max-width:920px">` 인라인 지정 때문입니다. 목록 페이지라 본문 측정폭 규칙을 적용하지 않습니다. 900px 폭에서 `.case-row` 가 1열로 접히며 **802px 까지 커지므로** 원본은 1200px 로 준비하세요.
+- `.doc-figure-pair` 는 정확히 **620px 이하에서 1열**로 바뀝니다. 2열 유지 구간의 최소 그림폭은 282px 입니다.
+- 인쇄에서 그림은 그대로 나오고(720px), `.doc-aside` 만 숨습니다.
+- 그림을 주입한 상태로 axe 를 다시 돌려도 **다크·라이트 두 테마 모두 위반 0건**입니다.
+
+**직접 재검증하려면** — 파일을 고치지 않고 DOM 주입으로 확인합니다. 아래 axe 블록과 같은 도구를 씁니다.
+
+```bash
+cd site && docker compose up --build -d && sleep 6
+npm --silent install --no-save puppeteer-core
+node -e "
+const puppeteer = require('puppeteer-core');
+const fs = require('fs'), path = require('path');
+const CHROME = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const IMG = '/assets/reports/thumbs/busan-2025-activity.webp';
+const walk = (d, o = []) => { for (const f of fs.readdirSync(d)) { const q = path.join(d, f);
+  if (fs.statSync(q).isDirectory()) { if (!['assets', '.git', '.claude', 'node_modules'].includes(f)) walk(q, o); }
+  else if (f.endsWith('.html')) o.push(q); } return o; };
+(async () => {
+  const b = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--no-sandbox'] });
+  for (const w of [1440, 1100, 900, 430]) {
+    let n = 0, bad = 0, widths = new Set();
+    for (const f of walk('.').sort()) {
+      const p = await b.newPage();
+      await p.setViewport({ width: w, height: 900 });
+      await p.goto('http://localhost:8080/' + f.replace(/^[.]\//, ''), { waitUntil: 'load' });
+      const ok = await p.evaluate((img) => {
+        const t = document.querySelector('.doc-body') || document.querySelector('.case-body');
+        if (!t) return false;
+        const mk = (cw, ch) => { const g = document.createElement('figure'); g.className = 'doc-figure';
+          g.innerHTML = '<img src=\"' + img + '\" alt=\"검증용\" width=\"' + cw + '\" height=\"' + ch + '\">' +
+                        '<figcaption>검증용 설명</figcaption>'; return g; };
+        t.appendChild(mk(1080, 608));
+        const pr = document.createElement('div'); pr.className = 'doc-figure-pair';
+        pr.appendChild(mk(1080, 608)); pr.appendChild(mk(1080, 1400)); t.appendChild(pr);
+        return true; }, IMG);
+      if (!ok) { await p.close(); continue; }
+      const m = await p.evaluate(() => {
+        const c = (document.querySelector('.doc-body') || document.querySelector('.case-body')).getBoundingClientRect();
+        const im = [...document.querySelectorAll('.doc-figure img')].map(i => i.getBoundingClientRect());
+        const a = document.querySelector('.doc-aside');
+        return { over: document.documentElement.scrollWidth > innerWidth + 1,
+                 spill: im.filter(r => r.right > c.right + 1 || r.left < c.left - 1).length,
+                 aside: !a || (a.getBoundingClientRect().right <= innerWidth + 1 && a.getBoundingClientRect().width > 0),
+                 w: Math.round(im[0].width) }; });
+      n++; widths.add(m.w);
+      if (m.over || m.spill || !m.aside) { bad++; console.log('  BAD', w, f, JSON.stringify(m)); }
+      await p.close();
+    }
+    console.log(w + 'px: ' + n + '쪽 검사 / 문제 ' + bad + '쪽 / 그림폭 ' + [...widths].sort((x, y) => x - y).join(','));
+  }
+  await b.close();
+})();
+"
+```
 
 ### 3-5. 프로필 사진 교체
 
@@ -674,6 +745,26 @@ print('증빙 이미지', len(glob.glob('assets/reports/awards/*.jpg')), '장 = 
 ```
 
 `.sec-meta`에는 장식이 아니라 **실제 정보**(건수, 기간, 분류)를 넣습니다. 모바일에서는 여백 칼럼이 제목 위 한 줄로 접힙니다.
+
+#### 상세 페이지 마지널리아 (`.doc-layout`)
+
+index 섹션은 여백주석이 **왼쪽**이지만, 상세 페이지는 **오른쪽**입니다. 본문 왼쪽에 번호·날짜를 세우면 제목 위 메타 줄과 중복되기 때문입니다.
+
+```html
+<div class="doc-layout">
+  <article class="doc">
+    <p class="doc-label">03.03 · Experience</p>
+    <div class="doc-meta-row"> … 날짜 · 태그 … </div>
+    <h1>…</h1>
+    <div class="doc-body"> … 본문 · .doc-figure … </div>
+  </article>
+  <aside class="doc-aside"> … 증빙 플레이트 · 관련 자료 … </aside>
+</div>
+```
+
+- 본문 **720px**(한글 약 44자/줄) + 레일 **264px**, 간격 56px. **1100px 이상**에서만 2열이 됩니다.
+- 레일이 본문보다 크게 길어지면 왼쪽이 비어 보입니다. 증빙 플레이트는 2단 격자로 묶고, 5장 이상이 흩어진 부록 페이지는 `.plate-row` 로 본문에 둡니다(3-4-2).
+- 인쇄에서는 `.masthead-aside` 와 함께 숨습니다.
 
 #### masthead 오른쪽 마지널리아 (`.masthead-aside`)
 
@@ -838,6 +929,11 @@ EOF
 - [ ] masthead `.mini-ledger` 의 진행 중·최근 수상이 최신인가 (3-1 표 참고)
 - [ ] `#skills` 4개 행이 이력서의 `기술 및 관심 분야` 와 어긋나지 않는가
 - [ ] 12px 미만 글씨가 없고, 두 테마 명암비가 AA 인가 (4장 스크립트)
+- [ ] 증빙을 추가·교체했다면 **썸네일을 다시 만들고**(3-4-2) KB 표기가 실제와 맞는가 (푸시 전 6번)
+- [ ] 본문에 그림(`.doc-figure`)을 넣었다면 원본 폭이 권장값인가 — 상세 1080px / 부록 갤러리 1200px (3-4-3)
+- [ ] 그림의 `alt` 이 채워져 있고(플레이트는 반대로 `alt=""`), `width`·`height` 가 실제 크기인가
+- [ ] 스크린샷에 실명·이메일·사번·내부 호스트명·토큰이 찍히지 않았는가 — **게시본을 눈으로**
+- [ ] 감사 부산물(`node_modules/`, `lh.json`)이 `git status` 에 뜨지 않는가
 - [ ] 로컬에서 **`docker compose up --build`** 로 실행해 다크/라이트, 1440·1024·768·375px 폭을 확인했는가
 - [ ] `.DS_Store` 같은 숨김 파일이 남아 있지 않은가 — 아래로 확인
 
@@ -976,6 +1072,11 @@ EOF
 반드시 게시본을 눈으로 확인하세요 — 체크리스트는 [`assets/reports/README.md`](assets/reports/README.md).
 
 ### 자동 감사 실행 방법 (Lighthouse · axe)
+
+> **⚠️ 감사 명령은 `site/` 안에 부산물을 만듭니다.** `npm install` 은 `node_modules/`(약 29 MB)를,
+> Lighthouse 는 `lh.json` 을 남깁니다. Pages 는 **추적된 모든 파일을 URL 로 서빙**하므로
+> 이것들이 커밋되면 그대로 공개됩니다. `.gitignore` 에 이미 넣어 두었으니
+> **`git status` 에 뜨지 않는 것을 확인**하고, `.gitignore` 를 건드렸다면 `git check-ignore -v node_modules/x` 로 다시 확인하세요.
 
 배포 전 또는 큰 변경 후에는 수동 확인 대신 아래를 돌리세요. 둘 다 Chrome 이 필요합니다.
 

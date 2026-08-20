@@ -89,40 +89,38 @@ cd site && git ls-files | grep -vE '\.(html|jpg|jpeg|png|svg|css|js|pdf|txt|xml)
 즉 **커스텀 도메인이 선택이 아니라 필수**입니다. `CNAME` 파일을 지우거나 Pages 설정에서
 커스텀 도메인을 비우면 404 페이지의 CSS·링크가 전부 깨집니다.
 
-### ⛔ 먼저 해야 하는 일: 도메인 소유권 이전
+### 배포 상태 (2026.08.20 라이브)
 
-`https://yeopeva.github.io/` 는 현재 `http://info.yeopeva.me/` 로 301 리다이렉트합니다.
-즉 **기존 Jekyll CV 저장소(`YeoPEVA/YeoPEVA.github.io`)가 `info.yeopeva.me` 를 이미 점유**하고 있습니다.
+| 항목 | 값 |
+|---|---|
+| URL | **https://info.yeopeva.me** |
+| Pages Source | `main` / `/ (root)` |
+| 커스텀 도메인 | `info.yeopeva.me` (`CNAME` 파일로 자동 인식) |
+| HTTPS | 강제 활성화 · `http` → 301 → `https` |
+| 인증서 | Let's Encrypt (Pages 자동 갱신) |
 
-GitHub Pages의 커스텀 도메인은 **전역에서 저장소 하나만 소유**할 수 있습니다.
-이 상태에서 포트폴리오 저장소에 `info.yeopeva.me` 를 설정하면
-`domain is already taken by another repository` 오류로 거부됩니다.
+CV 사이트는 `YeoPEVA/YeoPEVA.github.io` → **https://cv.yeopeva.me** 로 분리되어 있습니다.
+두 사이트가 같은 도메인을 다투지 않도록 각자 `CNAME` 을 갖고 있으니 **어느 쪽도 `info`/`cv` 를 바꾸지 마세요.**
+Pages 커스텀 도메인은 전역에서 저장소 하나만 소유할 수 있어, 겹치면 `domain is already taken` 으로 거부됩니다.
 
-**반드시 이 순서로 진행하세요.**
+### 변경 반영 절차
 
-1. `YeoPEVA/YeoPEVA.github.io` → Settings → Pages → Custom domain 을
-   `info.yeopeva.me` → **`cv.yeopeva.me`** 로 변경하고 Save
-   (저장소의 `CNAME` 파일 내용도 `cv.yeopeva.me` 로 수정)
-2. `cv.yeopeva.me` 로 CV 사이트가 정상 접속되는지 확인 (HTTPS 인증서 발급까지 몇 분)
-3. 그 다음에 아래 포트폴리오 배포 절차를 진행
-
-순서를 바꾸면 도메인 충돌로 배포가 막히고, 그 사이 두 사이트 모두 접속이 끊깁니다.
-
-### 최초 배포 절차
+`main` 에 푸시하면 Pages 가 자동으로 다시 빌드합니다(대개 30초 이내).
 
 ```bash
 cd site
-git remote add origin https://github.com/YeoPEVA/YeoPEVA-portfolio.github.io.git
-git branch -M main
-git push -u origin main
+# 5장 점검 체크리스트를 먼저 돌린 뒤
+git add -A && git commit -m "..." && git push
+
+# 빌드 완료까지 대기 후 실제 배포본 확인
+until [ "$(gh api repos/YeoPEVA/YeoPEVA-portfolio.github.io/pages/builds/latest --jq .status)" = "built" ]; do sleep 8; done
+gh api repos/YeoPEVA/YeoPEVA-portfolio.github.io/pages/builds/latest --jq '{status,commit:.commit[0:7],duration}'
+curl -s -o /dev/null -w '%{http_code}\n' https://info.yeopeva.me/
 ```
 
-이후 저장소 **Settings → Pages** 에서:
-1. Source: `Deploy from a branch` / Branch: `main` / Folder: `/ (root)`
-2. Custom domain: `info.yeopeva.me` → Save (`CNAME` 파일이 있으므로 자동 인식됨)
-3. `Enforce HTTPS` 체크 (인증서 발급까지 몇 분 소요)
-
-DNS는 `info.yeopeva.me` CNAME → `yeopeva.github.io` (또는 A 레코드 185.199.108–111.153).
+> **로컬에서 통과했다고 배포본이 같지 않습니다.** 모바일 LCP 12.2초는 로컬 nginx 에서는
+> 보이지 않았고, 배포 후 Lighthouse 를 실제 URL 로 돌려서야 드러났습니다(원인: 외부 폰트 CDN).
+> 큰 변경 뒤에는 **배포된 URL 로** 5장의 자동 감사를 한 번 더 돌리세요.
 
 ### 증빙 자료 취급 원칙
 
@@ -168,7 +166,7 @@ for f in sorted(glob.glob('assets/resume/*.pdf')):
 | 링크 | 위치 | 비고 |
 |---|---|---|
 | 이력서 PDF (국문·영문) | 상단 `.masthead-actions` | `download` 속성 — 새 창이 아니라 바로 내려받습니다 |
-| CV 사이트 `https://cv.yeopeva.me` | 상단 `.masthead-actions` (이력서 PDF 옆) | **아직 미개설** — 아래 주의 참고 |
+| CV 사이트 `https://cv.yeopeva.me` | 상단 `.masthead-actions` (이력서 PDF 옆) | 별도 저장소의 Jekyll CV 사이트 |
 | 기술 블로그 (Tistory) | 소개 `.about-links` + 하단 `.contact-actions` | |
 | 회고 블로그 (Postype) | 하단 `.contact-actions` | 회고록 중심 |
 | GitHub / LinkedIn | 소개 + 하단 | |
@@ -176,11 +174,9 @@ for f in sorted(glob.glob('assets/resume/*.pdf')):
 모든 외부 링크는 `class="btn btn-ext"` (또는 `.about-links a`)로 `↗` 표시가 자동으로 붙습니다.
 JSON-LD `sameAs` 배열에도 같은 URL이 들어가므로, URL을 바꿀 때는 **`index.html` 상단 JSON-LD도 함께** 수정하세요.
 
-> ⚠️ **`cv.yeopeva.me`는 현재 살아 있지 않습니다.** DNS A 레코드는 GitHub Pages(185.199.108.153)를
-> 가리키지만 이 도메인을 점유한 Pages 사이트가 없어 HTTPS 핸드셰이크가 실패합니다.
-> 기존 Jekyll CV 사이트(`YeoPEVA/YeoPEVA.github.io`)가 지금 `info.yeopeva.me`를 점유하고 있습니다.
-> **CV 사이트를 `cv.yeopeva.me`로 먼저 옮겨야** 이 포트폴리오를 배포할 수 있습니다 —
-> 위 "⛔ 먼저 해야 하는 일: 도메인 소유권 이전" 참고.
+> `cv.yeopeva.me` 는 별도 저장소(`YeoPEVA/YeoPEVA.github.io`)로 운영되는 Jekyll CV 사이트입니다.
+> 이 포트폴리오와 **내용이 겹치므로**(경력 기간·수상·논문·자격) 한쪽만 고치면 어긋납니다.
+> 이력이 바뀌면 이 사이트 · CV 사이트 · 이력서 PDF **세 곳을 함께** 보세요.
 
 ---
 
@@ -793,9 +789,9 @@ EOF
   .map(e => (e.id || e.className) + ':' + Math.round(e.getBoundingClientRect().height))
 ```
 
-### 공개 저장소에 푸시하기 전 (필수)
+### 푸시하기 전 (필수)
 
-> **커밋 이력은 사이트에 안 보여도 저장소에 영원히 남습니다.** 마스킹 전 이미지를 한 번
+> 저장소는 비공개지만 **사이트는 공개**이고, 커밋 이력은 지워도 남습니다. 마스킹 전 이미지를 한 번
 > 커밋하면 나중에 덮어써도 옛 blob 이 남아 꺼낼 수 있습니다.
 > **증빙은 마스킹을 끝낸 뒤에만 커밋하세요.** 이미 커밋했다면 파일을 고치는 것만으로는
 > 부족하고 이력을 다시 써야 합니다(`git checkout --orphan` → 단일 커밋 → `gc --prune=now`).

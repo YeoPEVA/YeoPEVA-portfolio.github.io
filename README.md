@@ -403,7 +403,9 @@ for folder,sec in [('experience','03'),('projects','04')]:
 | `experience/rokaf.html` | `awards/rokaf-hacking-competition.html` |
 | `projects/kfsi-academy.html` | `awards/kfsi-academy-2025.html`, `#education` |
 | `projects/dfir-competitions.html` | `awards/honam-cybersecurity-2025.html`, `awards/honam-cybersecurity-2024.html`, `awards/digital-criminal-finder.html` |
-| `projects/stellar-agent.html` | `#publications` |
+| `projects/stellar-agent.html` | `awards/schu-ai-sw-festival-2025.html`, `publications/stellar-agent-paper.html` |
+| `publications/stellar-agent-paper.html` | `projects/stellar-agent.html`, `awards/schu-ai-sw-festival-2025.html` |
+| `awards/schu-ai-sw-festival-2025.html` | `projects/stellar-agent.html`, `publications/stellar-agent-paper.html`, `education/sch-university.html` |
 | `projects/bob-platform.html` | 경찰학연구 논문 DOI(외부), `#education` |
 
 **관련 자료는 세 종류를 지원하며 화면에서 자동으로 구분됩니다.**
@@ -417,6 +419,7 @@ for folder,sec in [('experience','03'),('projects','04')]:
 파일 크기 등 부가 정보는 `<span class="meta">1.2 MB</span>` 로 넣으면 오른쪽에 정렬됩니다.
 
 - **실제 보고서·인증서 파일을 첨부하려면** `assets/reports/` 규칙을 따르세요. 폴더 구성, 복사해서 쓰는 마크업 틀, 링크 전수 검사 명령까지 [`assets/reports/README.md`](assets/reports/README.md)에 정리되어 있습니다.
+- **하나의 성과가 여러 종류에 걸치는 경우를 놓치기 쉽습니다.** Stellar-Agent 는 프로젝트이면서 논문 발표 건이고 동시에 SCHU AI &amp; SW Festival 대상 수상 건입니다(상장 작품주제가 프로젝트 부제와 동일). 처음에는 프로젝트↔논문만 연결되어 있어 수상이 무관한 항목처럼 보였습니다. 새 수상을 넣을 때는 **상장에 적힌 작품명·작품주제를 프로젝트 목록과 맞춰 보세요.**
 - 실제로 연결할 자료가 없는 항목은 `doc-related` 블록을 넣지 않습니다 — 근거 없는 링크를 억지로 만들지 않는 것이 원칙입니다. 현재 36개 상세 페이지 중 5개가 의도적으로 비어 있습니다.
 
 ### 3-5. 프로필 사진 교체
@@ -830,7 +833,33 @@ for f in sorted(glob.glob('assets/resume/*.pdf')):
 
 # 5) 마스킹 이전 버전이 커밋 이력에 남아 있지 않은지
 git rev-list --all --count   # 1 이 아니면 옛 blob 이 남아 있을 수 있음
+
+# 6) 증빙 파일 크기 표기(<span class="meta">NN KB</span>)가 실제 파일과 맞는지
+#    표기 규약은 2진 KB 반올림 = round(bytes / 1024)
+python3 <<'EOF'
+import re, os
+bad = 0; tot = 0
+for root, _, fs in os.walk('.'):
+    if '/.git' in root: continue
+    for fn in fs:
+        if not fn.endswith('.html'): continue
+        p = os.path.join(root, fn)
+        s = open(p, encoding='utf-8').read()
+        for m in re.finditer(r'href="([^"]+\.(?:jpg|jpeg|png|pdf))"[^>]*>.*?<span class="meta">(\d+) KB</span>', s, re.S):
+            t = os.path.normpath(os.path.join(root, m.group(1)))
+            if not os.path.exists(t): continue
+            tot += 1
+            real = round(os.path.getsize(t) / 1024)
+            if int(m.group(2)) != real:
+                bad += 1
+                print(f'{p}  {os.path.basename(m.group(1))}  표기 {m.group(2)} → 실제 {real} KB')
+print(f'검사 {tot}건 / 불일치 {bad}건')
+EOF
 ```
+
+> **6번은 증빙을 다시 저장했을 때 반드시 돌리세요.** 마스킹으로 파일 크기가 바뀌어도 KB 표기는
+> 따라오지 않습니다. 실제로 12건이 어긋난 채 배포되어 있었고, 최대 오차는
+> `act_privacy-monitoring-2024.jpg` 의 `385 → 485 KB` 였습니다.
 
 **새 증빙을 넣을 때는 자동 검사만 믿지 마세요.** 지금까지 발견된 마스킹 누락은 전부
 스캔 이미지나 표 형식 서식에서 나왔고, 텍스트 기반 검사로는 하나도 잡히지 않았습니다.

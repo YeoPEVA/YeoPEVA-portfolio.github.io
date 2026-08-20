@@ -1007,6 +1007,141 @@ svg{ width: 1em; height: 1em; }
   .doc-related-list .meta{ margin-left: 0; }
 }
 
+/* -----------------------------------------
+   상세 페이지 마지널리아 (.doc-layout)
+   .doc 는 가독 행장 720px(한글 약 44자/줄) 상한을 유지하고,
+   1100px 이상에서 남는 오른쪽 264px 을 증빙 플레이트로 씁니다.
+   이 마크업을 쓰지 않는 페이지는 종전과 동일하게 렌더됩니다.
+----------------------------------------- */
+.doc-aside{ margin-top: 34px; }
+
+@media (min-width: 1100px){
+  .doc-layout{
+    display: grid;
+    grid-template-columns: minmax(0, 720px) minmax(0, 264px);
+    gap: 0 56px;
+    align-items: start;
+  }
+  .doc-layout > .doc{ max-width: none; }
+  .doc-aside{
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+    margin-top: 0;
+  }
+}
+
+.doc-aside-title{
+  font-family: var(--font-mono);
+  font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-faint);
+  padding-bottom: 10px; margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* -----------------------------------------
+   본문 삽입 이미지 (.doc-figure)
+   프로젝트 설명 중간에 스크린샷·다이어그램을 넣을 때 씁니다.
+   본문 측정폭(720px) 안에 들어가며, 2장 나란히 두려면
+   .doc-figure-pair 로 감쌉니다.
+----------------------------------------- */
+.doc-figure{ margin: 26px 0; }
+.doc-figure img{
+  width: 100%; height: auto;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.doc-figure figcaption{
+  margin-top: 10px;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-strong);
+  font-size: .88rem; line-height: 1.6; color: var(--text-muted);
+}
+.doc-figure figcaption b{ color: var(--text); font-weight: 600; }
+/* 원본을 새 창으로 여는 링크를 감쌀 때 */
+.doc-figure a{ display: block; }
+.doc-figure a img{ transition: border-color .3s var(--ease); }
+.doc-figure a:hover img, .doc-figure a:focus-visible img{ border-color: var(--affordance); }
+.doc-figure-note{
+  display: block; margin-top: 4px;
+  font-family: var(--font-mono); font-size: .76rem; color: var(--text-faint);
+}
+
+.doc-figure-pair{
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  margin: 26px 0;
+}
+.doc-figure-pair .doc-figure{ margin: 0; }
+@media (max-width: 620px){
+  .doc-figure-pair{ grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* 본문 안에 직접 놓는 플레이트 행 — 항목마다 증빙이 흩어진 부록 페이지용.
+   단독 1장일 때도 커지지 않도록 최대 168px 로 묶습니다. */
+.plate-list.plate-row{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 168px));
+  gap: 20px 16px;
+  margin-top: 14px;
+}
+
+/* 레일(264px)에서는 kind 배지를 위로 올려 텍스트 폭을 확보합니다.
+   본문(720px)에서는 종전처럼 배지와 제목이 한 줄에 놓입니다. */
+.doc-aside .doc-related-list a{
+  flex-direction: column; align-items: stretch; gap: 3px;
+  padding: 11px 0;
+}
+.doc-aside .doc-related-list .kind{ margin-bottom: 1px; }
+.doc-aside .doc-related-list .meta{ margin-left: 0; }
+.doc-aside .doc-related-list a:hover{ transform: translateX(4px); }
+
+/* 레일에 증빙과 관련 자료가 함께 올 때 두 번째 제목 간격 */
+.doc-aside-title-2{ margin-top: 30px; }
+
+.plate-list{ display: flex; flex-direction: column; gap: 20px; }
+/* 좁은 화면에서는 본문 아래로 내려가므로 격자로 배치합니다. */
+@media (max-width: 1099px){
+  .plate-list:not(.plate-row){
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 22px 18px;
+  }
+}
+
+/* 변형 C — 레일 안에서 2단 격자로 배치해 높이를 줄입니다 */
+@media (min-width: 1100px){
+  .plate-grid{
+    display: grid;
+    /* auto-fit 은 최대값으로 트랙 수를 계산하므로 여기서는 1fr 을 써야 2단이 됩니다. */
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 16px 14px;
+  }
+  /* 1장뿐이면 레일 전폭(264px)까지 커지지 않도록 묶습니다. */
+  .plate-grid > li:only-child{ max-width: 168px; }
+}
+
+/* 같은 행의 캡션 기준선을 맞춥니다 (문서 비율이 서로 달라 이미지 높이가 다름) */
+.plate-list > li{ display: flex; }
+.plate{ display: flex; flex-direction: column; width: 100%; }
+.plate-cap{ margin-top: auto; }
+.plate img{
+  width: 100%; height: auto;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  transition: border-color .3s var(--ease);
+}
+.plate:hover img, .plate:focus-visible img{ border-color: var(--affordance); }
+.plate-cap{
+  display: block; padding-top: 9px;
+  font-size: .82rem; line-height: 1.5; color: var(--text-muted);
+  transition: color .3s var(--ease);
+}
+.plate:hover .plate-cap, .plate:focus-visible .plate-cap{ color: var(--accent); }
+.plate-meta{
+  display: block; margin-top: 2px;
+  font-family: var(--font-mono); font-size: .76rem; color: var(--text-faint);
+}
+.plate-meta::after{ content: " \2197"; }
+
 .detail-pager{
   max-width: 720px;
   display: flex; justify-content: space-between; gap: 16px;
@@ -1162,5 +1297,5 @@ svg{ width: 1em; height: 1em; }
   /* 항목이 페이지 경계에서 쪼개지지 않게 */
   .case-row, .award-row, .pub-item, .edu-item, .skill-row, .doc{ break-inside: avoid; }
   /* 마지널리아는 본문과 중복이라 인쇄에서 제외 */
-  .masthead-aside{ display: none; }
+  .masthead-aside, .doc-aside{ display: none; }
 }

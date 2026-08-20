@@ -420,7 +420,112 @@ for folder,sec in [('experience','03'),('projects','04')]:
 
 - **실제 보고서·인증서 파일을 첨부하려면** `assets/reports/` 규칙을 따르세요. 폴더 구성, 복사해서 쓰는 마크업 틀, 링크 전수 검사 명령까지 [`assets/reports/README.md`](assets/reports/README.md)에 정리되어 있습니다.
 - **하나의 성과가 여러 종류에 걸치는 경우를 놓치기 쉽습니다.** Stellar-Agent 는 프로젝트이면서 논문 발표 건이고 동시에 SCHU AI &amp; SW Festival 대상 수상 건입니다(상장 작품주제가 프로젝트 부제와 동일). 처음에는 프로젝트↔논문만 연결되어 있어 수상이 무관한 항목처럼 보였습니다. 새 수상을 넣을 때는 **상장에 적힌 작품명·작품주제를 프로젝트 목록과 맞춰 보세요.**
-- 실제로 연결할 자료가 없는 항목은 `doc-related` 블록을 넣지 않습니다 — 근거 없는 링크를 억지로 만들지 않는 것이 원칙입니다. 현재 36개 상세 페이지 중 5개가 의도적으로 비어 있습니다.
+- 실제로 연결할 자료가 없는 항목은 블록을 넣지 않습니다 — 근거 없는 링크를 억지로 만들지 않는 것이 원칙입니다.
+  현재 상세 37쪽 중 **28쪽이 오른쪽 레일**(`.doc-layout`), **3쪽이 본문 플레이트**(부록 갤러리),
+  **6쪽은 연결할 자료가 없어 1열 그대로**입니다(`404.html`, `anti-root`, `hspace`, `apt-incident-review`, `card-hacking`, `rfid-skimming`).
+  레이아웃과 플레이트 규격은 아래 3-4-1 ~ 3-4-3 을 보세요.
+
+### 3-4-1. 상세 페이지 레이아웃 — 본문 + 오른쪽 마지널리아
+
+상세 페이지는 `.doc-layout` 2열 격자입니다.
+
+```
+<div class="doc-layout">
+  <article class="doc"> … 본문 … </article>
+  <aside class="doc-aside"> … 증빙 플레이트 · 관련 자료 … </aside>
+</div>
+```
+
+| | 폭 | 근거 |
+|---|---|---|
+| `.doc` (본문) | 최대 **720px** | 한글 약 44자/줄. 가독 행장 상한이며 모바일과 무관합니다 |
+| `.doc-aside` (레일) | **264px** | container 내부 1064px − 본문 720px − 간격 56px |
+
+- **1100px 이상**에서만 2열이 됩니다. 그 아래에서는 레일이 본문 뒤로 내려가고, 플레이트는 자동으로 격자 배치됩니다(masthead 마지널리아와 같은 방식).
+- 레일에서는 `관련 자료`의 `kind` 배지가 위로 올라가 텍스트 폭을 확보합니다. 본문(720px)에 둘 때는 종전처럼 한 줄입니다.
+- 인쇄 시 `.doc-aside` 는 숨겨집니다.
+
+### 3-4-2. 증빙 썸네일 플레이트 (`.plate`)
+
+증빙 이미지는 텍스트 링크가 아니라 **썸네일 플레이트**로 보여줍니다. 원본은 새 창으로 열립니다.
+
+**원본을 그대로 쓰면 안 됩니다.** 증빙 원본 70장은 8,251 KB(평균 117 KB)입니다. `assets/reports/thumbs/` 의 396px WebP 는 64장 1,108 KB(평균 17 KB)로, 30장이 걸린 `other-training.html` 이 초기 108 KB만 받고 나머지는 `loading="lazy"` 로 뒤따릅니다.
+
+**썸네일 생성** — 증빙을 추가·교체하면 반드시 다시 돌리세요.
+
+```bash
+cd site
+python3 <<'EOF'
+from PIL import Image
+import glob, os
+W = 396
+for f in sorted(glob.glob('assets/reports/**/*.jpg', recursive=True)):
+    if '/thumbs/' in f: continue
+    out = 'assets/reports/thumbs/' + os.path.basename(f).rsplit('.', 1)[0] + '.webp'
+    im = Image.open(f).convert('RGB')
+    im.resize((W, round(im.height * W / im.width)), Image.LANCZOS).save(out, 'WEBP', quality=75, method=6)
+    print(out, os.path.getsize(out) // 1024, 'KB', '/ 원본', os.path.getsize(f) // 1024, 'KB')
+EOF
+```
+
+**마크업** — `width`/`height` 는 썸네일의 실제 크기이며, **빠뜨리면 CLS 가 생깁니다.** `KB` 표기는 원본 크기(2진 KB 반올림)입니다.
+
+> **`alt` 은 비워 둡니다.** 바로 아래 `plate-cap` 이 같은 내용을 담고 있어, `alt` 에 캡션을 반복하면
+> 스크린리더가 두 번 읽습니다. 링크의 접근 이름은 `plate-cap` + `plate-meta` 텍스트가 담당합니다.
+> 실제로 캡션을 `alt` 에 그대로 넣었다가, 3-6-1 집계 검증 스크립트가 디범찾 회차를 이중 계산하면서
+> 드러났습니다(`수상: 표기 23 / 계산 27`). 본문 삽입 이미지(`.doc-figure`)는 반대로 `alt` 을 채웁니다 —
+> 그림 내용과 `figcaption` 의 설명이 서로 다른 역할을 하기 때문입니다.
+
+```html
+<ul class="plate-list plate-grid">
+  <li><a class="plate" href="../assets/reports/awards/example.jpg" target="_blank" rel="noopener">
+    <img src="../assets/reports/thumbs/example.webp" alt=""
+         width="396" height="560" loading="lazy" decoding="async">
+    <span class="plate-cap">상장 · 2025.11.05</span>
+    <span class="plate-meta">JPG · 105 KB</span>
+  </a></li>
+</ul>
+```
+
+| 클래스 | 쓰는 곳 | 배치 |
+|---|---|---|
+| `.plate-list.plate-grid` | 오른쪽 레일 (`.doc-aside`) | 1장이면 168px, 2장 이상이면 2단 125px |
+| `.plate-list.plate-row` | 본문 안, 항목마다 증빙이 흩어진 부록 페이지 | 가로 격자, 장당 최대 168px |
+
+> `.plate-grid` 는 `repeat(auto-fit, minmax(115px, 1fr))` 를 씁니다. 최대값을 `168px` 같은 확정값으로 두면 `auto-fit` 이 **최대값 기준으로 트랙 수를 계산해 1단**이 됩니다. 1장인 경우만 `li:only-child { max-width: 168px }` 로 묶습니다.
+
+**레일에 넣지 않는 경우** — 증빙이 5장 이상이고 항목마다 흩어져 있으면(`other-training.html` 30장, `other-awards.html` 9장) 레일이 본문보다 훨씬 길어집니다. 이때는 `.plate-row` 로 본문 안에 둡니다. 세로 1단으로 레일에 쌓으면 본문 대비 높이차가 1,300px까지 벌어져 왼쪽이 비어 보입니다.
+
+**index 자격 목록은 텍스트 링크를 유지합니다** — 점선 리더(dot leader) 디자인이 썸네일과 맞지 않습니다. 그래서 자격증 증빙 6장은 썸네일을 만들지 않습니다.
+
+### 3-4-3. 본문 삽입 이미지 (`.doc-figure`)
+
+프로젝트 설명 중간에 스크린샷·다이어그램을 넣을 때 씁니다. 본문 측정폭(720px)을 씁니다.
+
+```html
+<figure class="doc-figure">
+  <a href="../assets/projects/example.webp" target="_blank" rel="noopener">
+    <img src="../assets/projects/example.webp" alt="무엇을 보여주는 그림인지"
+         width="1080" height="608" loading="lazy" decoding="async">
+  </a>
+  <figcaption><b>짧은 제목.</b> 그림이 무엇을 보여주는지 한 문장.
+    <span class="doc-figure-note">WEBP · 1080×608</span></figcaption>
+</figure>
+```
+
+2장을 나란히 두려면 `.doc-figure-pair` 로 감쌉니다. 620px 이하에서 자동으로 1열이 됩니다.
+
+```html
+<div class="doc-figure-pair">
+  <figure class="doc-figure"> … </figure>
+  <figure class="doc-figure"> … </figure>
+</div>
+```
+
+- **원본 폭은 1080px 로 맞추세요.** 본문 720px × 레티나 1.5배입니다. 더 크면 낭비이고, 작으면 흐려집니다.
+- 원본을 새 창으로 열 필요가 없으면 `<a>` 없이 `<img>` 만 둡니다.
+- `alt` 는 "무엇을 보여주는 그림인지"를 씁니다. 파일명이나 "스크린샷"만 쓰지 마세요.
+- 스크린샷에 실명·이메일·사번·내부 호스트명·토큰이 찍히지 않았는지 **게시본을 눈으로** 확인하세요. 증빙 이미지와 같은 기준입니다([`assets/reports/README.md`](assets/reports/README.md)).
 
 ### 3-5. 프로필 사진 교체
 
@@ -835,7 +940,8 @@ for f in sorted(glob.glob('assets/resume/*.pdf')):
 git rev-list --all --count   # 1 이 아니면 옛 blob 이 남아 있을 수 있음
 
 # 6) 증빙 파일 크기 표기(<span class="meta">NN KB</span>)가 실제 파일과 맞는지
-#    표기 규약은 2진 KB 반올림 = round(bytes / 1024)
+#    표기 규약은 2진 KB 반올림 = round(bytes / 1024). 표기는 항상 **원본** 크기입니다
+#    (플레이트는 썸네일을 보여주지만 링크와 KB 표기는 원본 기준)
 python3 <<'EOF'
 import re, os
 bad = 0; tot = 0
@@ -845,7 +951,11 @@ for root, _, fs in os.walk('.'):
         if not fn.endswith('.html'): continue
         p = os.path.join(root, fn)
         s = open(p, encoding='utf-8').read()
-        for m in re.finditer(r'href="([^"]+\.(?:jpg|jpeg|png|pdf))"[^>]*>.*?<span class="meta">(\d+) KB</span>', s, re.S):
+        # 플레이트(.plate-meta)와 텍스트 링크(.meta) 두 마크업을 모두 검사합니다.
+        pats = [r'href="([^"]+\.(?:jpg|jpeg|png|pdf))"[\s\S]{0,400}?<span class="plate-meta">\w+ · (\d+) KB</span>',
+                r'href="([^"]+\.(?:jpg|jpeg|png|pdf))"[^>]*>[^<]*<span class="kind">[^<]*</span>[^<]*<span class="meta">(\d+) KB</span>']
+        for pat in pats:
+          for m in re.finditer(pat, s):
             t = os.path.normpath(os.path.join(root, m.group(1)))
             if not os.path.exists(t): continue
             tot += 1

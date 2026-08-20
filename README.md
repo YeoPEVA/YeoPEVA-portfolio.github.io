@@ -925,6 +925,12 @@ const {webkit,firefox}=require('playwright');
 "
 ```
 
+> **Pretendard 는 반드시 `-dynamic-subset` 빌드를 씁니다.**
+> 통짜 `pretendardvariable.min.css` 는 가변 폰트 **2MB 를 한 번에** 내려받아
+> 모바일(느린 4G 기준)에서 LCP 가 12초까지 갔습니다. 사이트 자체 자산은 80KB 인데
+> 서드파티만 2.4MB 였습니다. 동적 서브셋은 `unicode-range` 로 쪼개진 92개 조각 중
+> **실제 쓰인 글자에 해당하는 것만** 받습니다. URL 에서 `-dynamic-subset` 을 빼지 마세요.
+
 **최소 지원 버전** — 하드 요구사항은 CSS 변수·grid(2017년 브라우저)뿐입니다.
 `text-wrap: balance/pretty`(Safari 17.5 / Firefox 121)와 `size-adjust`(Safari 17)는
 미지원 시 **줄바꿈이 덜 예뻐지고 폰트 스왑에서 살짝 밀리는 정도**로 끝납니다.

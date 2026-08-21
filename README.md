@@ -797,6 +797,90 @@ for href,_ in re.findall(r'href=\"(experience/[^\"]+)\"[^>]*>([^<]+)<',a):
 "
 ```
 
+#### 모바일 메뉴 닫힘 처리 (`inert` + `visibility`)
+
+**`opacity: 0` 과 `pointer-events: none` 만으로 닫으면 마우스에만 닫히고 키보드에는 열려 있습니다.** `pointer-events` 는 키 입력과 무관하므로, 메뉴를 열지 않아도 `Tab` 이 보이지 않는 링크 8개를 순회합니다. 실제로 그런 상태로 배포되어 있었고 Chromium 모바일 폭에서 재현됐습니다.
+
+| 속성 | 막는 것 | 못 막는 것 |
+|---|---|---|
+| `opacity: 0` | 보이는 것 | 클릭 · 포커스 · 접근성 트리 |
+| `pointer-events: none` | 마우스 · 터치 | **키보드 포커스** |
+| `visibility: hidden` | 마우스 · 키보드 포커스 | (페이드 전환과 함께 쓰려면 지연 필요) |
+| `inert` | 클릭 · 포커스 · 접근성 트리 | — |
+
+현재는 **셋을 함께** 씁니다. `inert` 가 의도를 명확히 하고, `visibility` 가 `inert` 미지원 브라우저의 안전망입니다.
+
+```css
+.main-nav{                                  /* @media (max-width: 720px) 안 */
+  opacity: 0; transform: translateY(-8px); pointer-events: none;
+  visibility: hidden;
+  transition: opacity .25s var(--ease), transform .25s var(--ease),
+              visibility 0s linear .25s;    /* 페이드가 끝난 뒤 숨김 */
+}
+.main-nav.is-open{
+  opacity: 1; transform: none; pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;                     /* 열 때는 즉시 */
+}
+```
+
+**`inert` 를 HTML 에 하드코딩하면 안 됩니다.** 데스크톱에서도 같은 `<nav>` 를 가로 메뉴로 쓰기 때문에, `<nav inert>` 로 박아 두면 스크립트가 차단·실패했을 때 메뉴 전체가 죽습니다. `inert` 는 CSS 속성이 아니라 되돌릴 수도 없습니다. 반드시 **JS 가 브레이크포인트를 보고** 붙입니다(`assets/js/main.js`).
+
+```js
+const NAV_MQ = window.matchMedia("(max-width: 720px)");
+const setNav = (open) => {
+  nav.classList.toggle("is-open", open);
+  navToggle.setAttribute("aria-expanded", String(open));
+  nav.inert = NAV_MQ.matches && !open;      // 데스크톱에서는 절대 걸지 않습니다
+};
+NAV_MQ.addEventListener("change", () => NAV_MQ.matches ? setNav(nav.classList.contains("is-open")) : setNav(false));
+```
+
+**열 때 첫 링크로 포커스를 옮깁니다.** DOM 순서가 `nav → themeToggle → navToggle` 이라, 토글에서 `Tab` 을 눌러도 메뉴를 지나쳐 본문으로 갑니다. 메뉴에 닿으려면 `Shift+Tab` 을 2~9회 눌러야 해서 키보드로는 사실상 쓸 수 없었습니다.
+
+그 밖에 지켜야 하는 동작:
+
+| 동작 | 처리 |
+|---|---|
+| `Esc` | 닫고 **토글 버튼으로 포커스 복귀**. 복귀하지 않으면 `inert` 영역 안에 포커스가 남습니다 |
+| 링크 선택 | 섹션 이동 + 닫기. 이때는 포커스를 되돌리지 않습니다 |
+| 포커스가 메뉴 밖으로 | `focusout` 으로 닫기 |
+| 폭 변경 | `matchMedia` 로 상태 초기화. **데스크톱에 `inert` 가 남으면 가로 메뉴 전체가 키보드·스크린리더에서 사라집니다** |
+| 버튼 이름 | `aria-label="메뉴"` **고정**. `aria-expanded` 가 이미 상태를 전달하므로 `열기`/`닫기` 로 바꾸면 "메뉴 닫기, 확장됨" 처럼 두 번 읽힙니다 |
+| `prefers-reduced-motion` | `.main-nav{ transition: none !important }` — `visibility` 지연이 남으면 사라지는 데 0.25s 가 걸립니다 |
+| JS 차단 | `html:not(.js) .main-nav` 에 `visibility: visible` 과 `transition: none` 이 함께 있어야 펼침 폴백이 성립합니다 |
+
+**`aria-hidden="true"` 만 붙이는 것으로는 안 됩니다.** 내부 링크의 키보드 포커스가 남아, 포커스 가능한 요소가 `aria-hidden` 안에 있는 모순이 생깁니다. 링크마다 `tabindex="-1"` 을 넣는 방법도 동작하지만 열 때 복원해야 하고 링크가 추가되면 누락됩니다.
+
+**검증 방법** — 모바일 폭에서 메뉴를 **열지 않고** `Tab` 을 누르세요. 토글 다음 포커스가 보이지 않는 링크가 아니라 화면에 보이는 다음 컨트롤로 가면 정상입니다. axe 는 이 결함을 잡지 못합니다(위반 0건인 상태로 배포되어 있었습니다).
+
+```bash
+cd site && docker compose up --build -d && sleep 6
+npm --silent install --no-save puppeteer-core
+node -e "
+const puppeteer = require('puppeteer-core');
+const CHROME = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+(async () => {
+  const b = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--no-sandbox'] });
+  const p = await b.newPage();
+  await p.setViewport({ width: 430, height: 900 });
+  await p.goto('http://localhost:8080/index.html', { waitUntil: 'load' });
+  let hidden = 0;
+  for (let i = 0; i < 8; i++) {
+    await p.keyboard.press('Tab');
+    const d = await p.evaluate(() => {
+      const e = document.activeElement;
+      return { inNav: !!e.closest('#mainNav'), text: (e.textContent || '').trim().slice(0, 12) };
+    });
+    if (d.inNav) hidden++;
+    console.log('  Tab', i + 1, d.text, d.inNav ? '[메뉴 안]' : '');
+  }
+  console.log(hidden === 0 ? 'OK 닫힌 메뉴에 포커스 없음' : 'BAD 닫힌 메뉴 링크 ' + hidden + '개');
+  await b.close();
+})();
+"
+```
+
 ### 모션 시스템
 
 애니메이션은 세 가지 클래스로만 구성됩니다. 새 요소에도 이 클래스를 붙이면 자동으로 동작합니다.
@@ -934,6 +1018,9 @@ EOF
 - [ ] 그림의 `alt` 이 채워져 있고(플레이트는 반대로 `alt=""`), `width`·`height` 가 실제 크기인가
 - [ ] 스크린샷에 실명·이메일·사번·내부 호스트명·토큰이 찍히지 않았는가 — **게시본을 눈으로**
 - [ ] 감사 부산물(`node_modules/`, `lh.json`)이 `git status` 에 뜨지 않는가
+- [ ] **모바일 폭에서 메뉴를 열지 않고 `Tab`** — 보이지 않는 메뉴 링크로 포커스가 가지 않는가 (4장, axe 로는 안 잡힘)
+- [ ] 메뉴를 열면 첫 링크로 포커스가 가고, `Esc` 로 닫으면 토글 버튼으로 돌아오는가
+- [ ] 모바일에서 열어 둔 채 데스크톱 폭으로 넓혔을 때 가로 메뉴가 키보드로 닿는가 (`inert` 잔존 확인)
 - [ ] 로컬에서 **`docker compose up --build`** 로 실행해 다크/라이트, 1440·1024·768·375px 폭을 확인했는가
 - [ ] `.DS_Store` 같은 숨김 파일이 남아 있지 않은가 — 아래로 확인
 

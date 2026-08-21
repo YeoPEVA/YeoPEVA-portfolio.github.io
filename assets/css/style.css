@@ -219,6 +219,8 @@ svg{ width: 1em; height: 1em; }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
   .mask > span, .rule, .reveal{ transition: none !important; }
+  /* visibility 지연이 남으면 메뉴가 사라지는 데 0.25s 가 걸립니다. */
+  .main-nav{ transition: none !important; }
   .mask > span{ transform: none; }
   .rule{ transform: none; }
   .reveal{ opacity: 1; transform: none; }
@@ -1202,18 +1204,29 @@ svg{ width: 1em; height: 1em; }
     padding: 8px;
     background: var(--bg-elevated);
     border-bottom: 1px solid var(--border);
+    /* pointer-events 는 마우스만 막습니다. visibility 까지 써야 키보드
+       포커스가 차단됩니다(inert 미지원 브라우저의 안전망). 페이드가 끝난
+       뒤에 숨도록 visibility 만 전환을 지연시킵니다. */
     opacity: 0; transform: translateY(-8px); pointer-events: none;
-    transition: opacity .25s var(--ease), transform .25s var(--ease);
+    visibility: hidden;
+    transition: opacity .25s var(--ease), transform .25s var(--ease),
+                visibility 0s linear .25s;
   }
-  .main-nav.is-open{ opacity: 1; transform: none; pointer-events: auto; }
+  .main-nav.is-open{
+    opacity: 1; transform: none; pointer-events: auto;
+    visibility: visible;
+    transition-delay: 0s;
+  }
 
   /* JS 가 꺼지면 토글이 동작하지 않아 내비게이션 8개가 닿지 않습니다.
      그럴 때는 헤더 아래에 그대로 펼쳐 둡니다. */
   html:not(.js) .main-nav{
     position: static;
     opacity: 1;
+    visibility: visible;
     transform: none;
     pointer-events: auto;
+    transition: none;
     border-top: 1px solid var(--border);
   }
   html:not(.js) .nav-toggle{ display: none; }

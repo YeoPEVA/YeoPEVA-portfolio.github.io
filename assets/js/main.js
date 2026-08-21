@@ -30,17 +30,60 @@
     localStorage.setItem(THEME_KEY, next);
   });
 
-  /* ---------- Mobile nav ---------- */
+  /* ---------- Mobile nav ----------
+     닫힌 메뉴를 opacity/pointer-events 로만 가리면 마우스에만 닫히고
+     키보드에는 열려 있습니다. pointer-events 는 키 입력과 무관하므로
+     Tab 이 보이지 않는 링크 8개를 순회했습니다. inert 로 접근성 트리에서
+     빼고, CSS 의 visibility:hidden 이 inert 미지원 브라우저를 받칩니다.
+     inert 는 HTML 에 넣지 않습니다 — 데스크톱에서도 같은 <nav> 를 쓰므로
+     스크립트가 실패하면 메뉴 전체가 죽습니다. 반드시 JS 가 폭을 보고 붙입니다. */
+  const NAV_MQ = window.matchMedia("(max-width: 720px)");
+
+  const setNav = (open) => {
+    if (!nav || !navToggle) return;
+    nav.classList.toggle("is-open", open);
+    navToggle.setAttribute("aria-expanded", String(open));
+    nav.inert = NAV_MQ.matches && !open;
+  };
+
+  /* 폭이 바뀌면 상태를 초기화합니다. 데스크톱에서 inert 가 남으면
+     가로 메뉴 전체가 키보드·스크린리더에서 사라집니다. */
+  const syncNav = () => {
+    if (!nav || !navToggle) return;
+    if (NAV_MQ.matches) setNav(nav.classList.contains("is-open"));
+    else setNav(false);
+  };
+  syncNav();
+  NAV_MQ.addEventListener("change", syncNav);
+
   navToggle?.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
+    const open = navToggle.getAttribute("aria-expanded") !== "true";
+    setNav(open);
+    /* DOM 순서가 nav → themeToggle → navToggle 이라, 열고 Tab 을 눌러도
+       메뉴를 지나쳐 본문으로 갑니다(메뉴에 닿으려면 Shift+Tab 2~9회).
+       그래서 열 때 첫 링크로 포커스를 옮깁니다. */
+    if (open) requestAnimationFrame(() => nav?.querySelector(".nav-link")?.focus());
   });
 
-  nav?.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("is-open");
-      navToggle?.setAttribute("aria-expanded", "false");
-    });
+  nav?.addEventListener("click", (e) => {
+    if (e.target.closest(".nav-link")) setNav(false);
+  });
+
+  /* Esc 로 닫고 버튼으로 포커스를 되돌립니다.
+     되돌리지 않으면 닫힌(inert) 메뉴 안에 포커스가 남아 위치를 잃습니다. */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navToggle?.getAttribute("aria-expanded") === "true") {
+      setNav(false);
+      navToggle.focus();
+    }
+  });
+
+  /* 열린 채 포커스가 메뉴 밖으로 나가면 닫습니다. */
+  nav?.addEventListener("focusout", (e) => {
+    if (!NAV_MQ.matches) return;
+    if (navToggle?.getAttribute("aria-expanded") !== "true") return;
+    if (nav.contains(e.relatedTarget) || e.relatedTarget === navToggle) return;
+    setNav(false);
   });
 
   /* ---------- Reading progress + back to top ---------- */

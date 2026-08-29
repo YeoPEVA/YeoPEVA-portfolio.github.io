@@ -503,12 +503,20 @@ EOF
 
 ### 3-4-3. 본문 삽입 이미지 (`.doc-figure`)
 
+> **실사용 예 — 논문 요약 캡처.** `publications/` 6쪽에 논문의 **제목 + 요약**만 잘라 넣었습니다.
+> 1페이지를 통째로 올리면 저자 블록의 개인정보가 함께 공개됩니다 — 실제로 Stellar-Agent 논문에는
+> 공저자 4명의 이메일이, CISC-W 2018·2019 논문에는 공저자들의 **고등학교·중학교명과 학년**(당시 미성년)이
+> 있었습니다. PyMuPDF 블록 좌표로 제목·요약 영역만 렌더링하고 저자·소속·이메일 밴드는 배제했으며,
+> 위험 문자열(`@`·`고등학교`·`중학교`·`학년`·`대학교`·`gmail`·`ac.kr`) 검사로 0건을 확인했습니다.
+> **논문·상장처럼 사람이 찍힌 문서를 캡처할 때는 필요한 영역만 잘라내는 편이 마스킹보다 안전합니다.**
+
+
 프로젝트 설명 중간에 스크린샷·다이어그램을 넣을 때 씁니다. 본문 측정폭(720px)을 씁니다.
 
 ```html
 <figure class="doc-figure">
-  <a href="../assets/projects/example.webp" target="_blank" rel="noopener">
-    <img src="../assets/projects/example.webp" alt="무엇을 보여주는 그림인지"
+  <a href="../assets/figures/example.webp" target="_blank" rel="noopener">
+    <img src="../assets/figures/example.webp" alt="무엇을 보여주는 그림인지"
          width="1080" height="608" loading="lazy" decoding="async">
   </a>
   <figcaption><b>짧은 제목.</b> 그림이 무엇을 보여주는지 한 문장.
@@ -525,6 +533,7 @@ EOF
 </div>
 ```
 
+- 파일은 **`assets/figures/`** 에 둡니다. 증빙(`assets/reports/`)과 달리 본문에 직접 실리는 그림입니다.
 - **원본 폭은 1080px 로 맞추세요.** 본문 720px × 레티나 1.5배입니다. 더 크면 낭비이고, 작으면 흐려집니다.
 - 원본을 새 창으로 열 필요가 없으면 `<a>` 없이 `<img>` 만 둡니다.
 - `alt` 는 "무엇을 보여주는 그림인지"를 씁니다. 파일명이나 "스크린샷"만 쓰지 마세요.

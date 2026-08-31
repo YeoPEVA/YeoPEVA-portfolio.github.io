@@ -430,6 +430,17 @@ svg{ width: 1em; height: 1em; }
   color: var(--text-faint);
   flex: none;
 }
+/* 연결할 상세 페이지가 없는 줄 (CTF 결과 등). a 와 같은 자리를 차지합니다. */
+.mini-ledger .item{ color: var(--text-muted); }
+.mini-ledger .item em{
+  display: block;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  letter-spacing: .06em;
+  color: var(--accent);
+  margin-top: 2px;
+}
 
 /* -----------------------------------------
    Buttons

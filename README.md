@@ -663,27 +663,33 @@ print('증빙 이미지', len(glob.glob('assets/reports/awards/*.jpg')), '장 = 
 **태그를 늘리는 방향으로 손대지 마세요.** 처음에는 6개 행 30개 태그였는데,
 `Windows Artifact`·`MFT`·`Registry`·`Prefetch`·`Event Log` 처럼 한 역량의 하위 항목이
 따로 태그가 되고, `IoC 정리`·`분석 보고서 작성`·`CloudGoat 학습` 처럼 역량이 아닌 것이 섞여
-"무엇을 실제로 할 수 있는지"가 읽히지 않았습니다. 지금은 **4행 18태그**입니다.
+"무엇을 실제로 할 수 있는지"가 읽히지 않았습니다. 지금은 **4행 19태그**입니다.
 
 | 규칙 | 내용 |
 |---|---|
 | 행은 **역량 묶음** | `디지털 포렌식 · 침해대응` / `악성코드 분석 · 탐지 룰` / `보안 운영` / `엔지니어링` |
 | 행마다 **한 줄 설명 필수** | `.skill-note` — 태그만 있으면 층위가 뭉개집니다. 무엇을 했는지 문장으로 씁니다 |
 | 태그는 **훑어보기용** | 행당 4~6개. 세부는 설명 문장에 넣습니다 |
+| 설명은 **범위를 못박습니다** | `Windows/Linux 주요 아티팩트` 같은 무한 표현 대신 `$MFT·Prefetch·이벤트 로그·웹 로그·PCAP` 처럼 나열합니다. 나열 밖은 묻지 않거나, 물어도 안 해봤다고 답하기 쉽습니다 |
+| 근거 0인 태그는 **뺍니다** | `AWS` 를 뺀 이유입니다 — 상세 페이지 언급 0곳에 자격증도 만료였습니다. 자격 목록에는 남겨 둡니다 |
 | **역량이 아닌 것은 아래로** | 관심 분야·언어는 `.skill-foot` 정의목록으로 분리 |
 | 학습 중인 것은 **태그로 넣지 않음** | 근거로 이어지지 않는 태그는 오히려 신뢰를 깎습니다 |
-| `주력` 배지는 **한 행에만** | `.skill-level` — 여러 곳에 붙이면 우선순위가 사라집니다 |
+| **강조** 배지는 한 행에만 | `.skill-level` 은 네 행 모두에 붙이되, 주력 외에는 `.is-sub` 로 강조를 뺍니다. 배지를 한 행에만 두면 나머지 셋이 무표시=동급으로 읽혀, 복무 중 경험(03)이 주력과 같은 무게로 보입니다. 강조는 하나, 층위는 전부 — 두 가지를 같이 만족시키려고 두 단계로 나눴습니다 |
+| 행마다 **근거 줄 필수** | `.skill-src` — 태그는 주장이고 이 줄은 그 주장이 어디에서 나왔는지입니다. 근거 경로가 없으면 읽는 사람은 어느 칸이 깊은지 몰라 가장 약해 보이는 태그부터 확인하려 듭니다. 링크는 **기존 상세 페이지**만 씁니다 |
 
 ```html
 <div class="skill-row reveal">
   <div class="skill-row-head">
     <span class="skill-index">01</span>
     <h3>디지털 포렌식 · 침해대응</h3>
-    <span class="skill-level">주력</span>   <!-- 선택, 한 행에만 -->
+    <span class="skill-level">주력</span>            <!-- 강조는 한 행에만 -->
+    <!-- 나머지 행: <span class="skill-level is-sub">복무 경험</span> -->
   </div>
   <div class="skill-body">
     <p class="skill-note">무엇을 어떻게 하는지 한 문장.</p>
     <div class="tag-list"><span class="tag">…</span></div>
+    <p class="skill-src"><span class="lbl">근거</span>
+      <a href="awards/…">대표 사례</a></p>
   </div>
 </div>
 ```
@@ -1020,7 +1026,8 @@ EOF
 - [ ] 위 스크립트가 전부 `0` / `OK` / `없음` 인가
 - [ ] `index.html`의 요약과 상세 페이지 본문 내용이 일치하는가 (자동 검사 대상 아님)
 - [ ] masthead `.mini-ledger` 의 진행 중·최근 수상이 최신인가 (3-1 표 참고)
-- [ ] `#skills` 4개 행이 이력서의 `기술 및 관심 분야` 와 어긋나지 않는가
+- [ ] `#skills` 4개 행이 이력서의 `기술 및 관심 분야` 와 어긋나지 않는가 (3-7 대조 스크립트)
+- [ ] 기술 행마다 `.skill-src` 근거 줄이 있고, 링크가 실제 상세 페이지를 가리키는가
 - [ ] 12px 미만 글씨가 없고, 두 테마 명암비가 AA 인가 (4장 스크립트)
 - [ ] 증빙을 추가·교체했다면 **썸네일을 다시 만들고**(3-4-2) KB 표기가 실제와 맞는가 (푸시 전 6번)
 - [ ] 본문에 그림(`.doc-figure`)을 넣었다면 원본 폭이 권장값인가 — 상세 1080px / 부록 갤러리 1200px (3-4-3)
@@ -1281,3 +1288,27 @@ const {webkit,firefox}=require('playwright');
 
 사이트 코드(HTML/CSS/JS)는 자유롭게 참고하셔도 됩니다.
 **증빙 이미지·이력서·프로필 사진 등 개인 자료는 재사용을 허용하지 않습니다.**
+
+#### 사이트 ↔ 이력서 기술 행 대조
+
+```bash
+cd site && python3 -c "
+import re,html
+s=open('index.html',encoding='utf-8').read()
+i=s.find('id=\"skills\"'); b=s[i:s.find('<section',i+10)]
+rows=[]
+for m in re.finditer(r'<h3>(.*?)</h3>([\s\S]*?)(?=<span class=\"skill-index\">|<dl class=\"skill-foot)',b):
+    rows.append((html.unescape(m.group(1)),
+                 [html.unescape(x) for x in re.findall(r'class=\"tag\">(.*?)</span>',m.group(2))]))
+tex=open('../cv/latex_resume_template_kor/resume/tex/resume_dfir_ko.tex',encoding='utf-8').read()
+sk=dict(re.findall(r'\\\\resumeSkill\{([^}]*)\}\{([^}]*)\}',tex))
+NAME={'디지털 포렌식 · 침해대응':'디지털 포렌식 · 침해대응 (DFIR)'}
+norm=lambda L:[x.strip().replace(' · ','·') for x in L]
+for t,tags in rows:
+    r=norm(sk.get(NAME.get(t,t),'').split(',')); st=norm(tags)
+    print(('OK  ' if st==r else '차이'), t, '' if st==r else f'\n  사이트 {st}\n  이력서 {r}')
+"
+```
+
+이력서 6종은 기술 행이 모두 같으므로 `resume_dfir_ko.tex` 하나만 대조하면 됩니다.
+경력기술서는 같은 4행이지만 표현이 더 길어(예: `분석 보고서 작성` 포함) 이 검사 대상이 아닙니다.

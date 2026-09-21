@@ -645,6 +645,23 @@ svg{ width: 1em; height: 1em; }
 }
 
 /* 기술이 아닌 항목(관심 분야·언어)은 대장 아래 별도 줄로 내립니다. */
+/* ── 기술 행의 근거 ────────────────────────────────────────
+   태그는 "할 줄 안다"는 주장이고, 이 줄은 그 주장이 어디에서 나왔는지를
+   가리킵니다. 근거 경로가 없으면 읽는 사람은 어느 칸이 깊은지 알 수 없어
+   가장 약해 보이는 칸부터 확인하려 듭니다. */
+.skill-src{
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 4px 14px; margin-top: 12px; font-size: .82rem;
+}
+.skill-src .lbl{
+  font-family: var(--font-mono); font-size: .76rem;
+  letter-spacing: .06em; color: var(--text-faint); flex: none;
+}
+.skill-src a{ color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.skill-src a:hover{ color: var(--accent); border-bottom-color: var(--accent); }
+/* 주력 외 행은 같은 배지를 쓰되 강조를 뺍니다 — 층위만 보이면 됩니다. */
+.skill-level.is-sub{ color: var(--text-faint); border-color: var(--border); }
+
 .skill-foot{
   display: grid;
   grid-template-columns: 210px minmax(0, 1fr);

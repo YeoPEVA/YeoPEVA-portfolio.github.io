@@ -72,13 +72,13 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">04.04 · Project</p>
+      <p class="doc-label">04.04&nbsp;· Project</p>
       <div class="doc-meta-row">
         <span class="doc-date">2025.07.08 – 2025.11.07</span>
-        <span class="doc-tag">DFIR · CTF</span>
+        <span class="doc-tag">DFIR&nbsp;· CTF</span>
       </div>
       <h1>금융보안아카데미 2025</h1>
-      <p class="doc-role">사이버 위협 대응·분석 과정 (3기) · 금융보안원</p>
+      <p class="doc-role">사이버 위협 대응·분석 과정 <span class="nb">(3기)&nbsp;·</span> 금융보안원</p>
 
       <div class="doc-body">
         <p>금융권 위협 분석·대응 절차를 학습하고 DFIR 중심 CTF를 수행했습니다.</p>
@@ -92,19 +92,19 @@
         <span class="rule is-in"></span>
         <p style="margin-top:18px">국방부 주최 화이트햇 콘테스트 예선(2025.10.18, 대학생부 4등·본선 진출)에서 <b>포렌식 파트를 담당</b>했습니다. 아래는 직접 푼 두 문제입니다.</p>
         <ul class="doc-list">
-          <li><b>시나리오 1-3 · 백도어 경로 특정</b> — 앞선 시나리오에서 확인된 PyYAML 역직렬화 취약점(CVE-2020-14343)으로 침투가 이뤄졌다는 전제 위에서, 리눅스 디스크 이미지의 <code>log/nginx/access.log</code> 를 먼저 봤습니다. 다른 요청과 IP 대역이 다르고 <code>curl</code> 로 접근한 <code>GET /bd</code> 한 건이 눈에 띄어 nginx 쪽을 의심했고, <code>/usr/lib/nginx/modules/</code> 에서 <b>기본 빌드에 포함되지 않는</b> <code>ngx_http_secure_headers_module.so</code> 가 원본보다 크고 수정 시각도 침투 시점과 맞아 백도어로 확정했습니다.</li>
+          <li><b>시나리오 1-3&nbsp;· 백도어 경로 특정</b> — 앞선 시나리오에서 확인된 PyYAML 역직렬화 취약점(CVE-2020-14343)으로 침투가 이뤄졌다는 전제 위에서, 리눅스 디스크 이미지의 <code>log/nginx/access.log</code> 를 먼저 봤습니다. 다른 요청과 IP 대역이 다르고 <code>curl</code> 로 접근한 <code>GET /bd</code> 한 건이 눈에 띄어 nginx 쪽을 의심했고, <code>/usr/lib/nginx/modules/</code> 에서 <b>기본 빌드에 포함되지 않는</b> <code>ngx_http_secure_headers_module.so</code> 가 원본보다 크고 수정 시각도 침투 시점과 맞아 백도어로 확정했습니다.</li>
         </ul>
         <figure class="doc-figure">
-          <img src="../assets/figures/whitehat-2025-nginx-module.webp" alt="nginx 모듈 디렉터리와 공식 문서 대조 화면"
-               width="1120" height="1055" loading="lazy" decoding="async">
+          <a class="doc-figure-link" href="../assets/figures/whitehat-2025-nginx-module.webp" target="_blank" rel="noopener"><img src="../assets/figures/whitehat-2025-nginx-module.webp" alt="nginx 모듈 디렉터리와 공식 문서 대조 화면"
+               width="1120" height="1055" loading="lazy" decoding="async"></a>
           <figcaption><b>모듈 판별.</b> 이름이 비슷한 정식 모듈(<code>ngx_http_secure_link_module</code>)의 문서와 대조해, 기본 빌드에 없는 모듈이 심어졌음을 확인했습니다.</figcaption>
         </figure>
         <ul class="doc-list">
-          <li><b>Leakage Investigation · 유출 경로 추적</b> — 단일 pcap 을 zeek 으로 먼저 훑어 <code>weird.log</code> 의 <code>bad_HTTP_request</code> 와 문서용 예약 대역(<code>198.51.100.0/24</code>) 통신을 단서로 의심 IP 를 좁혔습니다. Wireshark 로 해당 IP 를 필터링해 "이미지로 메시지를 보내겠다"는 대화와 PNG 8장을 추출했고, 대화에 적힌 규칙(<b>red 채널 반전 · 앞 4자리에 길이 기록</b>)대로 디코딩해 제품명과 날짜를 복원했습니다.</li>
+          <li><b>Leakage Investigation&nbsp;· 유출 경로 추적</b> — 단일 pcap 을 zeek 으로 먼저 훑어 <code>weird.log</code> 의 <code>bad_HTTP_request</code> 와 문서용 예약 대역(<code>198.51.100.0/24</code>) 통신을 단서로 의심 IP 를 좁혔습니다. Wireshark 로 해당 IP 를 필터링해 "이미지로 메시지를 보내겠다"는 대화와 PNG 8장을 추출했고, 대화에 적힌 규칙(<b>red 채널 반전&nbsp;· 앞 4자리에 길이 기록</b>)대로 디코딩해 제품명과 날짜를 복원했습니다.</li>
         </ul>
         <figure class="doc-figure">
-          <img src="../assets/figures/whitehat-2025-stego-chat.webp" alt="패킷에서 추출한 raw_strings.txt 대화 내용"
-               width="1120" height="1308" loading="lazy" decoding="async">
+          <a class="doc-figure-link" href="../assets/figures/whitehat-2025-stego-chat.webp" target="_blank" rel="noopener"><img src="../assets/figures/whitehat-2025-stego-chat.webp" alt="패킷에서 추출한 raw_strings.txt 대화 내용"
+               width="1120" height="1308" loading="lazy" decoding="async"></a>
           <figcaption><b>은닉 규칙.</b> 패킷에서 뽑은 대화가 스테가노그래피 규칙 자체를 담고 있어, 이미지 8장에서 메시지를 복원하는 근거가 됐습니다.</figcaption>
         </figure>
 
@@ -112,17 +112,17 @@
         <span class="rule is-in"></span>
         <p style="margin-top:18px">과정 중 팀 <b>금붕어하겐다즈도둑</b>(Goldfish Häagen-Dazs Thieves)으로 참가한 대회입니다. 국제 CTF 3건과 국내 대회 5건이며, 국내 두 대회는 본선에 올랐습니다.</p>
         <ul class="mini-ledger" style="margin-top:6px">
-            <li><span class="item">Kaspersky CTF 2025<em>Asia·Oceania 716팀 중 15위 · 한국 2위</em></span><span class="dots" aria-hidden="true"></span><time>2025.08</time></li>
+            <li><span class="item">Kaspersky CTF 2025<em>Asia·Oceania 716팀 중 15위&nbsp;· 한국 2위</em></span><span class="dots" aria-hidden="true"></span><time>2025.08</time></li>
             <li><span class="item">DefCamp CTF 2025<em>701팀 중 62위</em></span><span class="dots" aria-hidden="true"></span><time>2025.09</time></li>
-            <li><span class="item">FIESTA 2025 대학부<em>122팀 중 7위 · 특별상(에너자이저상)</em></span><span class="dots" aria-hidden="true"></span><time>2025.09</time></li>
-            <li><span class="item">제1회 영남권 사이버 공격 방어 대회 예선<em>대학생부 3위 · 본선 진출</em></span><span class="dots" aria-hidden="true"></span><time>2025.09</time></li>
+            <li><span class="item">FIESTA 2025 대학부<em>122팀 중 7위&nbsp;· 특별상(에너자이저상)</em></span><span class="dots" aria-hidden="true"></span><time>2025.09</time></li>
+            <li><span class="item">제1회 영남권 사이버 공격 방어 대회 예선<em>대학생부 3위&nbsp;· 본선 진출</em></span><span class="dots" aria-hidden="true"></span><time>2025.09</time></li>
             <li><span class="item">유플러스 시큐리티 해커톤 예선<em>103팀 중 19위</em></span><span class="dots" aria-hidden="true"></span><time>2025.10</time></li>
-            <li><span class="item">화이트햇 콘테스트 2025 예선<em>대학생부 4위 · 본선 진출</em></span><span class="dots" aria-hidden="true"></span><time>2025.10</time></li>
+            <li><span class="item">화이트햇 콘테스트 2025 예선<em>대학생부 4위&nbsp;· 본선 진출</em></span><span class="dots" aria-hidden="true"></span><time>2025.10</time></li>
             <li><span class="item">LINE CTF 2025<em>162팀 중 31위</em></span><span class="dots" aria-hidden="true"></span><time>2025.10</time></li>
             <li><span class="item">제1회 영남권 사이버 공격 방어 대회 결선<em>우수상 (한국주택금융공사 사장)</em></span><span class="dots" aria-hidden="true"></span><time>2025.10</time></li>
         </ul>
 
-        <p class="doc-note">금융보안아카데미 2025 최우수상 (금융보안원장) · 2025.11.07</p>
+        <p class="doc-note">금융보안아카데미 2025 최우수상 <span class="nb">(금융보안원장)&nbsp;·</span> 2025.11.07</p>
       </div>
 
     </article>
@@ -130,15 +130,15 @@
     <aside class="doc-aside">
       <p class="doc-aside-title">관련 자료</p>
       <ul class="doc-related-list">
-        <li><a href="../assets/reports/projects/whitehat-2025-writeup.pdf" download><span class="kind">PDF</span>화이트햇 2025 예선 풀이 발췌 (1-3 · Leakage Investigation)<span class="meta">1039 KB</span></a></li>
+        <li><a href="../assets/reports/projects/whitehat-2025-writeup.pdf" download><span class="kind">PDF</span>화이트햇 2025 예선 풀이 발췌 (1-3&nbsp;· Leakage Investigation)<span class="meta">1039 KB</span></a></li>
           <li><a href="../awards/kfsi-academy-2025.html"><span class="kind">Award</span>금융보안아카데미 2025 최우수상</a></li>
-          <li><a href="../education/kfsi-academy-edu.html"><span class="kind">Education</span>금융보안원 · 금융보안아카데미 3기 이수 내역</a></li>
+          <li><a href="../education/kfsi-academy-edu.html"><span class="kind">Education</span>금융보안원&nbsp;· 금융보안아카데미 3기 이수 내역</a></li>
       </ul>
     </aside>
     </div>
 
     <nav class="detail-pager">
-      <a class="pager-prev" href="dfir-competitions.html">← 이전 항목<br><span>디지털 포렌식 · 침해대응 경진대회 분석</span></a>
+      <a class="pager-prev" href="dfir-competitions.html">← 이전 항목<br><span>디지털 포렌식&nbsp;· 침해대응 경진대회 분석</span></a>
       <a class="pager-next" href="mft-parser.html">다음 항목 →<br><span>MFT Parser 분석 &amp; 개선</span></a>
     </nav>
   </div>

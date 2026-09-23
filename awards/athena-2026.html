@@ -72,25 +72,25 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">05.01 · Award</p>
+      <p class="doc-label">05.01&nbsp;· Award</p>
       <div class="doc-meta-row">
         <span class="doc-date">2026.09.18</span>
         <span class="doc-tag">KISA 원장상</span>
       </div>
       <h1>제3회 정보보호 교육·훈련 사이버공격·방어 시나리오 경진대회</h1>
-      <p class="doc-role">한국정보보호학회 정보보호교육연구회 주최 · 한국인터넷진흥원장 수여 · 대학(원)생 부문 · WISE 2026 시상식</p>
+      <p class="doc-role">한국정보보호학회 정보보호교육연구회 주최&nbsp;· 한국인터넷진흥원장 수여&nbsp;· 대학(원)생 부문&nbsp;· WISE 2026 시상식</p>
 
       <div class="doc-body">
         <p>한국정보보호학회 정보보호교육연구회가 주최하는, 정보보호 교육·훈련에 쓸 사이버 공격·방어 시나리오 공모전입니다. 대학(원)생 부문에 <b>4편</b>을 제출해 그중 통신 분야 시나리오로 <b>한국인터넷진흥원장상</b>을 받았습니다.</p>
         <p>수상작은 <b>「지워진 로그, 남겨진 바이트: 통신 가입자·USIM 정보 유출 규모와 고객보호 범위 산정」</b>입니다. 나머지 세 편은 금융 2편(상담 RAG 의 근거 오염, AI 에이전트 업무 대기열 침해)과 SOC 자동화 1편(에이전트 오격리와 서비스 계정 침해 복구)이었습니다.</p>
         <p>상황은 이렇습니다. 통신사 운영 서버에서 가입자·USIM 추출 파일의 생성·삭제와 암호화 전송 흔적이 나오는데, 같은 구간의 DB 감사로그가 비어 있습니다. VPN·호스트·네트워크 장비의 시각과 전송량도 서로 맞지 않아 단일 로그로는 규모를 단정할 수 없습니다. 보호 범위를 좁게 잡으면 피해 고객이 빠지고, 넓게 잡으면 불필요한 USIM 재발급과 통지로 이어집니다.</p>
         <ul class="doc-list">
-          <li><b>1단계 · 증거 보존과 시간성 정합화</b> — Velociraptor Collection Container 로 받은 결과를 Plaso 로 추출해 Timesketch 에 올리고, PCAP 의 공통 기준 사건과 NTP·systemd-timesyncd 기록으로 장비별 시각 오차를 산정해 공통 시간축을 만듭니다.</li>
-          <li><b>2단계 · 패시브 백도어 헌팅</b> — Volatility 3 로 프로세스 계보·열린 파일·소켓·메모리 매핑을 훑어 Raw/Packet Socket 후보를 찾습니다. BPF 부착은 audit·eBPF 텔레메트리로 확인될 때만 확정하고, 실제 전송 가설과 로컬 생성 후 미전송 가설을 함께 검토합니다.</li>
-          <li><b>3단계 · 유출 규모와 고객보호 범위 산정</b> — PCAP 의 <code>tcp.len</code>, Zeek 의 <code>orig_bytes</code>·<code>missed_bytes</code>, NetFlow exporter octet, 수신 서버 persisted bytes 는 수집 지점과 포함 범위가 다릅니다. 이 차이를 측정 프로파일로 고정한 뒤 최소·대표·보수적 최대 범위를 계산하고, <code>COUNT(DISTINCT)</code> 로 고유 가입자 토큰을 분리해 <b>최소 보호군 · 우선 조사군 · 보수적 보호군</b>을 냅니다.</li>
-          <li><b>4단계 · 차단과 탐지 검증</b> — 계정·호스트·전송 경로를 차단하고, <code>zeek -r</code> 과 <code>wazuh-logtest</code> 로 단위시험한 규칙을 tcpreplay 로 사고·정상 PCAP 을 재생해 종단 간 확인합니다. 정상 통신 업무를 방해하지 않는지까지 봅니다.</li>
+          <li><b>1단계&nbsp;· 증거 보존과 시간성 정합화</b> — Velociraptor Collection Container 로 받은 결과를 Plaso 로 추출해 Timesketch 에 올리고, PCAP 의 공통 기준 사건과 NTP·systemd-timesyncd 기록으로 장비별 시각 오차를 산정해 공통 시간축을 만듭니다.</li>
+          <li><b>2단계&nbsp;· 패시브 백도어 헌팅</b> — Volatility 3 로 프로세스 계보·열린 파일·소켓·메모리 매핑을 훑어 Raw/Packet Socket 후보를 찾습니다. BPF 부착은 audit·eBPF 텔레메트리로 확인될 때만 확정하고, 실제 전송 가설과 로컬 생성 후 미전송 가설을 함께 검토합니다.</li>
+          <li><b>3단계&nbsp;· 유출 규모와 고객보호 범위 산정</b> — PCAP 의 <code>tcp.len</code>, Zeek 의 <code>orig_bytes</code>·<code>missed_bytes</code>, NetFlow exporter octet, 수신 서버 persisted bytes 는 수집 지점과 포함 범위가 다릅니다. 이 차이를 측정 프로파일로 고정한 뒤 최소·대표·보수적 최대 범위를 계산하고, <code>COUNT(DISTINCT)</code> 로 고유 가입자 토큰을 분리해 <b>최소 보호군&nbsp;· 우선 조사군&nbsp;· 보수적 보호군</b>을 냅니다.</li>
+          <li><b>4단계&nbsp;· 차단과 탐지 검증</b> — 계정·호스트·전송 경로를 차단하고, <code>zeek -r</code> 과 <code>wazuh-logtest</code> 로 단위시험한 규칙을 tcpreplay 로 사고·정상 PCAP 을 재생해 종단 간 확인합니다. 정상 통신 업무를 방해하지 않는지까지 봅니다.</li>
         </ul>
-        <p>설계에서 가장 신경 쓴 지점은 <b>정답을 하나로 두지 않는 것</b>이었습니다. 특정 악성코드 이름을 맞히는 문제가 아니라, 모든 사건을 <b>직접 관측 · 합리적 추정 · 확인 불가</b>로 나눠 적게 했습니다. 감사로그 공백을 곧바로 침해 증거로 단정하지 않는 것이 핵심입니다. 채점은 고정 증거 Fixture 와 분석 Replay 를 기준으로 하고, 컨테이너 이미지 다이제스트·lockfile·입력 해시·Decimal 계산을 고정해 같은 입력이면 같은 결과가 나오게 했습니다.</p>
+        <p>설계에서 가장 신경 쓴 지점은 <b>정답을 하나로 두지 않는 것</b>이었습니다. 특정 악성코드 이름을 맞히는 문제가 아니라, 모든 사건을 <b>직접 관측&nbsp;· 합리적 추정&nbsp;· 확인 불가</b>로 나눠 적게 했습니다. 감사로그 공백을 곧바로 침해 증거로 단정하지 않는 것이 핵심입니다. 채점은 고정 증거 Fixture 와 분석 Replay 를 기준으로 하고, 컨테이너 이미지 다이제스트·lockfile·입력 해시·Decimal 계산을 고정해 같은 입력이면 같은 결과가 나오게 했습니다.</p>
         <p class="doc-note">훈련 데이터는 사전에 재현한 합성 증거이며, 가입자 식별자는 재식별할 수 없는 가상 토큰으로 바꿨습니다. 전송 목적지는 외부 인터넷이 아닌 실습망 내부 수신 서버로 제한했고, 분석 범위에 이동통신 코어망은 넣지 않았습니다.</p>
       </div>
 
@@ -101,8 +101,8 @@
       <ul class="plate-list plate-grid">
         <li><a class="plate" href="../assets/reports/awards/athena-2026.jpg" target="_blank" rel="noopener">
           <img src="../assets/reports/thumbs/athena-2026.webp" alt="" width="396" height="561" loading="lazy" decoding="async">
-          <span class="plate-cap">상장 이미지 · 2026.09.18</span>
-          <span class="plate-meta">JPG · 203 KB</span>
+          <span class="plate-cap">상장 이미지&nbsp;· 2026.09.18</span>
+          <span class="plate-meta">JPG&nbsp;· 203 KB</span>
         </a></li>
       </ul>
 

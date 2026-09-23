@@ -513,9 +513,15 @@ EOF
 
 프로젝트 설명 중간에 스크린샷·다이어그램을 넣을 때 씁니다. 본문 측정폭(720px)을 씁니다.
 
+**그림은 반드시 원본 링크로 감쌉니다** (`class="doc-figure-link"`). 모바일(390px)에서 그림은 원본의
+31~32% 로 줄어 그림 속 글자가 **4.6~7.5px** 가 됩니다 — 본문(16px)의 1/3 이라 읽을 수 없습니다.
+링크로 감싸면 눌렀을 때 브라우저 이미지 보기로 열려 자유롭게 확대할 수 있고, 720px 이하에서는
+그림 아래에 `눌러서 크게 보기 ↗` 띠가 붙습니다. 이 템플릿은 원래부터 링크를 감싸게 되어 있었는데
+실제 그림 10개는 링크 없이 들어가 있었습니다 — 문서와 페이지가 어긋나지 않게 주의하세요.
+
 ```html
 <figure class="doc-figure">
-  <a href="../assets/figures/example.webp" target="_blank" rel="noopener">
+  <a class="doc-figure-link" href="../assets/figures/example.webp" target="_blank" rel="noopener">
     <img src="../assets/figures/example.webp" alt="무엇을 보여주는 그림인지"
          width="1080" height="608" loading="lazy" decoding="async">
   </a>
@@ -899,6 +905,85 @@ const CHROME = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Conte
 "
 ```
 
+#### 모바일 가독성 — 좁은 화면에서만 드러나는 함정
+
+데스크톱에서는 멀쩡한데 **420px 이하에서만** 깨지는 것들입니다. 전부 실제로 배포돼 있었습니다.
+
+| 함정 | 증상 | 규칙 |
+|---|---|---|
+| **점선은 스페이서였다** | `≤420px` 에서 `.dots` 를 숨기면 날짜가 제목 끝에 붙습니다 (`HSPACE FORENSIC LAB2025.10 —`). 첫 화면 원장 6행 전부, 자격 7행 중 5~6행, CTF 원장 8행 중 7~8행이 그랬습니다 | `.dots` 뒤에 오는 요소에 `margin-left: auto` — 새 원장·목록을 만들면 `@media (max-width: 420px)` 의 해당 줄에 셀렉터를 추가합니다 |
+| **그림 속 글자** | 31~32% 로 줄어 4.6~7.5px | 3-4-3 — 원본 링크로 감쌉니다 |
+| **구분점이 줄 첫머리로** | `디지털 포렌식 / · 침해사고대응` 처럼 `·` 가 다음 줄을 시작합니다. 360px 에서 16곳 | 본문의 ` · ` 는 **`&nbsp;· `** 로 씁니다 (점을 앞말에 붙임) |
+| **괄호 뒤 구분점** | `(금융보안원장)&nbsp;·` 는 nbsp 가 있어도 WebKit 이 `)` 뒤에서 끊습니다 | `<span class="nb">(…)&nbsp;·</span>` — 짧은 구절에만 씁니다 |
+| **상대 크기 배지** | `.expired` 가 `.9em` 이라 부모의 90% = **11.2px** 로 12px 규칙 위반 | 작은 배지는 `em` 대신 **`rem` 고정값** |
+| **글자만 누를 수 있는 링크** | 원장 링크 21px, 기술 근거 링크 19px — 24px 기준 미달 | 줄 전체를 덮는 `::after`(원장) 또는 위아래로 넓힌 `::before`(인라인 줄). **`padding` 을 쓰면 밑줄 위치가 바뀝니다** |
+| **두 칸 머리줄** | `.filing` 두 칸이 각각 2~3줄로 접히고 `·` 가 줄 끝에 매달림 | `≤480px` 에서 위아래로 |
+
+**새 텍스트를 넣을 때** — 구분점은 처음부터 `&nbsp;· ` 로 쓰세요. 이미 쓴 것은 아래로 일괄 변환됩니다
+(`<head>`·속성값·`<code>` 는 건드리지 않습니다).
+
+```bash
+cd site && python3 - <<'EOF'
+import re,glob
+SKIP=('script','style','code','pre','title','textarea')
+for f in glob.glob('*.html')+glob.glob('*/*.html'):
+    h=open(f,encoding='utf-8').read(); bi=h.find('<body'); head,body=h[:bi],h[bi:]
+    parts=re.split(r'(<[^>]+>)',body); stack=[]
+    for i,pt in enumerate(parts):
+        if pt.startswith('<'):
+            m=re.match(r'<(/?)([a-zA-Z0-9]+)',pt)
+            if m and m.group(2).lower() in SKIP:
+                if m.group(1): stack and stack.pop()
+                else: stack.append(m.group(2).lower())
+            continue
+        if not stack: parts[i]=pt.replace(' · ','&nbsp;· ')
+    open(f,'w',encoding='utf-8').write(head+''.join(parts))
+EOF
+```
+
+**점검** — 아래는 6개 폰 폭에서 다섯 지표가 모두 0 이어야 합니다. `height:9000` 은 일부러입니다 —
+뷰포트 밖 요소는 `elementFromPoint` 가 `null` 을 돌려줘 **누르는 높이를 잴 수 없고, 그러면 글자 상자
+높이가 그대로 찍혀 통과한 것처럼 보입니다.** 실제로 그렇게 한 번 잘못 판정했습니다.
+
+```bash
+cd site && python3 -m http.server 8080 & sleep 1 && node - <<'EOF'
+const {webkit}=require('playwright');const fs=require('fs');
+const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' | sed 's|^./||'").toString().trim().split('\n');
+(async()=>{const b=await webkit.launch();
+ for(const W of [320,360,375,390,412,420]){
+  const c=await b.newContext({viewport:{width:W,height:9000},isMobile:true,hasTouch:true});const p=await c.newPage();
+  const t={dot:0,glued:0,tiny:0,ovf:0,tap:0};
+  for(const u of pages){
+   await p.goto('http://127.0.0.1:8080/'+u,{waitUntil:'domcontentloaded'});
+   await p.evaluate(()=>document.querySelectorAll('.reveal').forEach(e=>e.classList.add('is-in')));
+   const r=await p.evaluate(()=>{
+    let dot=0;const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    while(w.nextNode()){const n=w.currentNode,s=n.textContent;for(let i=0;i<s.length;i++){if(s[i]!=='·'||!n.parentElement.offsetParent)continue;
+      const a=document.createRange();a.setStart(n,i);a.setEnd(n,i+1);const d=a.getBoundingClientRect();if(!d.width)continue;
+      for(let j=i-1;j>=0;j--){if(s[j].trim()){const q=document.createRange();q.setStart(n,j);q.setEnd(n,j+1);if(d.top>q.getBoundingClientRect().top+4)dot++;break;}}}}
+    const glued=[...document.querySelectorAll('.dots')].filter(x=>{const t=x.nextElementSibling,l=x.previousElementSibling;if(!t||!l)return false;
+      const P=x.parentElement.getBoundingClientRect(),T=t.getBoundingClientRect(),L=l.getBoundingClientRect();return Math.abs(T.top-L.top)<6&&T.left-L.right<6&&P.right-T.right>8}).length;
+    const tiny=[...document.querySelectorAll('body *')].filter(e=>e.offsetParent&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())&&parseFloat(getComputedStyle(e).fontSize)<12).length;
+    const hit=a=>{const r=a.getBoundingClientRect();if(!r.width)return 99;const x=r.left+Math.min(10,r.width/2);const own=y=>{const e=document.elementFromPoint(x,y);return e&&(e===a||a.contains(e))};
+      let m=r.top+r.height/2;if(!own(m))return r.height;let t=m,bt=m;while(own(t-1)&&t>r.top-40)t--;while(own(bt+1)&&bt<r.bottom+40)bt++;return bt-t+1};
+    const tap=[...document.querySelectorAll('a[href],button')].filter(a=>a.offsetParent&&!a.classList.contains('skip-link')&&!(a.closest('p')&&getComputedStyle(a).display==='inline')).filter(a=>hit(a)<24).length;
+    return {dot,glued,tiny,ovf:+(document.documentElement.scrollWidth>document.documentElement.clientWidth+1),tap}});
+   for(const k in t) t[k]+=r[k];
+  }
+  console.log(W+'px', JSON.stringify(t)); await c.close();}
+ await b.close(); process.exit(0);})();
+EOF
+kill %1
+```
+
+| 지표 | 뜻 |
+|---|---|
+| `dot` | 줄 첫머리에 온 구분점 `·` |
+| `glued` | 점선 뒤 날짜가 제목에 붙은 행 |
+| `tiny` | 12px 미만 글자 |
+| `ovf` | 가로 스크롤이 생긴 페이지 |
+| `tap` | 실제로 누르는 높이가 24px 미만인 링크 (문단 안 인라인 링크는 WCAG 2.5.8 예외라 제외) |
+
 ### 모션 시스템
 
 애니메이션은 세 가지 클래스로만 구성됩니다. 새 요소에도 이 클래스를 붙이면 자동으로 동작합니다.
@@ -1030,6 +1115,9 @@ EOF
 - [ ] `index.html`의 요약과 상세 페이지 본문 내용이 일치하는가 (자동 검사 대상 아님)
 - [ ] masthead `.mini-ledger` 의 진행 중·최근 수상이 최신인가 (3-1 표 참고)
 - [ ] 수상·논문·경험을 늘렸다면 **3-6 검산 스크립트를 그대로** 돌렸는가 — `#about` 의 `.tally` 와 `#awards` 의 `.sec-meta` 는 **서로 다른 두 곳**이다. 한쪽만 고치고 넘어간 적이 있다
+- [ ] **모바일 점검 스크립트**(4장 `모바일 가독성`)를 돌려 6개 폭에서 다섯 지표가 모두 0 인가
+- [ ] 새 그림이 `.doc-figure-link` 로 감싸져 있는가 (3-4-3)
+- [ ] 새 원장·목록에 `.dots` 가 있다면 `≤420px` 의 `margin-left: auto` 셀렉터에 추가했는가
 - [ ] `#skills` 4개 행이 이력서의 `기술 및 관심 분야` 와 어긋나지 않는가 (3-7 대조 스크립트)
 - [ ] 기술 행마다 `.skill-src` 근거 줄이 있고, 링크가 실제 상세 페이지를 가리키는가
 - [ ] 12px 미만 글씨가 없고, 두 테마 명암비가 AA 인가 (4장 스크립트)

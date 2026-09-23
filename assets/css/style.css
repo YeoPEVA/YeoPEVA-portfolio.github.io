@@ -226,6 +226,20 @@ svg{ width: 1em; height: 1em; }
 }
 .reveal.is-in, .is-in > .reveal{ opacity: 1; transform: none; }
 
+/* 첫 화면은 기다리게 하지 않습니다.
+   .reveal 은 JS 가 돌기 전까지 opacity 0 이고, 돈 뒤에도 0.7s 전환과 순차 지연
+   (최대 12 × 55ms)이 붙습니다. 스크롤 아래 요소에는 좋은 연출이지만 첫 화면에
+   걸리면 폰에서 첫 문장이 약 2초 늦게 보입니다 — Lighthouse 모바일에서 LCP 가
+   index 3.7s → 1.8s, 상세 페이지 3.8~4.7s → 1.2~1.3s 로 줄었습니다.
+   대상: index 의 masthead, 상세 페이지의 .doc 직계 블록(머리·본문 시작부).
+   하이라인(.rule)은 내용을 가리지 않으므로 그대로 그려집니다.
+   이 요소들은 자체 :hover transform 이 없어 여기서 transform 을 고정해도
+   호버 효과를 덮지 않습니다 (새 요소를 넣으면 다시 확인하세요). */
+.js .masthead .reveal,
+.js .doc > .reveal{ opacity: 1; transform: none; transition: none; }
+.js .masthead .mask > span,
+.js .masthead .masthead-name.mask > span{ transform: none; transition: none; }
+
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
   .mask > span, .rule, .reveal{ transition: none !important; }

@@ -72,7 +72,7 @@ cd site && git ls-files | grep -vE '\.(html|jpg|jpeg|png|svg|css|js|pdf|txt|xml)
 | 사이트에 접근 제어 걸기 | **불가** — 비공개 게시(private publishing)는 Enterprise Cloud 조직 전용 |
 
 > **저장소를 비공개로 두는 것은 커밋 이력·원본 파일을 감추는 효과뿐입니다.**
-> `assets/reports/`의 증빙 이미지 69장은 URL만 알면 누구나 열 수 있습니다.
+> `assets/reports/`의 증빙 이미지 70장은 URL만 알면 누구나 열 수 있습니다.
 > 따라서 위 "증빙 자료 취급 원칙"은 저장소 공개 여부와 무관하게 항상 적용됩니다.
 
 ### 저장소 이름과 경로 제약 (중요)
@@ -449,7 +449,7 @@ for folder,sec in [('experience','03'),('projects','04')]:
 
 증빙 이미지는 텍스트 링크가 아니라 **썸네일 플레이트**로 보여줍니다. 원본은 새 창으로 열립니다.
 
-**원본을 그대로 쓰면 안 됩니다.** 증빙 원본 69장은 8,177 KB(평균 118 KB)입니다. `assets/reports/thumbs/` 의 396px WebP 는 63장 966 KB(평균 15 KB)로, 30장이 걸린 `other-training.html` 이 초기 108 KB만 받고 나머지는 `loading="lazy"` 로 뒤따릅니다.
+**원본을 그대로 쓰면 안 됩니다.** 증빙 원본 70장은 8,303 KB(평균 119 KB)입니다. `assets/reports/thumbs/` 의 396px WebP 는 64장 995 KB(평균 16 KB)로, 30장이 걸린 `other-training.html` 이 초기 108 KB만 받고 나머지는 `loading="lazy"` 로 뒤따릅니다.
 
 **썸네일 생성** — 증빙을 추가·교체하면 반드시 다시 돌리세요.
 

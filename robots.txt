@@ -14,5 +14,6 @@ Disallow: /assets/reports/README.md
 Disallow: /nginx.conf
 Disallow: /Dockerfile
 Disallow: /docker-compose.yml
+Disallow: /tools/
 
 Sitemap: https://info.yeopeva.me/sitemap.xml

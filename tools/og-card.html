@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- 공유 미리보기 카드(1200×630) 원본. 직접 열지 말고 tools/og-card.js 로 렌더합니다.
+     숫자(수상·발표·논문·자격)는 스크립트가 index.html 의 .tally 에서 읽어 채웁니다 —
+     카드에 손으로 쓰면 사이트와 어긋납니다(수상 23 으로 한 달 넘게 남아 있었습니다). -->
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=block">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  *{ margin:0; box-sizing:border-box; }
+  html,body{ width:1200px; height:630px; background:#14161a; }
+  body{ padding:65px 72px 0; color:#e9ebee; font-family:"Pretendard",sans-serif; position:relative; }
+  .mono{ font-family:"SFMono-Regular",ui-monospace,Menlo,monospace; }
+  .ref{ font-size:23.2px; letter-spacing:.02em; color:#e2794c; }
+  .rule{ height:1px; background:#474e5a; margin:21px 0 0; }
+  h1{ font-family:"Gowun Batang",serif; font-weight:400; font-size:110px; line-height:1; letter-spacing:.084em; margin:32px 0 0 3px; }
+  .latin{ font-size:22.5px; letter-spacing:.04em; color:#8b9299; margin-top:35px; }
+  .lead{ font-size:34.3px; line-height:1.34; color:#b6bcc3; margin-top:31px; letter-spacing:-.005em; }
+  .foot{ position:absolute; left:72px; right:72px; top:487px; border-top:1px solid #2c313a; padding-top:22px;
+         display:flex; justify-content:space-between; align-items:flex-start; }
+  .school{ font-size:25.9px; color:#8b9299; }
+  .url{ font-size:24px; color:#e2794c; margin-top:13px; }
+  .tally{ text-align:right; font-size:25.9px; line-height:1.48; color:#b6bcc3; margin-top:-3px; }
+</style></head>
+<body>
+  <p class="ref mono">DIGITAL FORENSICS / INCIDENT RESPONSE</p>
+  <div class="rule"></div>
+  <h1>이창엽</h1>
+  <p class="latin mono">CHANGYEOB LEE</p>
+  <p class="lead">흔적을 따라 원인을 좁혀가고,<br>그 과정을 다시 밟을 수 있게 남기는 일을 합니다.</p>
+  <div class="foot">
+    <div><p class="school">순천향대학교 정보보호학과</p><p class="url mono">info.yeopeva.me</p></div>
+    <div class="tally"><p>수상 <span id="t-award">?</span></p><p>발표·논문 <span id="t-pub">?</span></p><p>자격 <span id="t-cert">?</span></p></div>
+  </div>
+</body></html>

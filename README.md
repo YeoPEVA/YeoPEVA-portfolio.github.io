@@ -640,8 +640,10 @@ cp <새-사진-경로> site/assets/images/profile.jpeg
 |---|---|---|
 | 수상 | 본문 목록 행 − 디범찾 1행 + 디범찾 개별 건수 + 부록 건수 | 11 + 4 + 9 = **24** |
 
-> 같은 숫자가 **두 곳**에 적힙니다 — `#about` 의 `.tally`(`수상 <b>24</b>`)와 `#awards` 의 `.sec-meta`(`24건 · 2017–2026`).
-> 아래 스크립트는 `.tally` 만 검사하므로, `.sec-meta` 의 연도 범위도 함께 눈으로 확인하세요.
+> 같은 숫자가 **세 곳**에 적힙니다 — `#about` 의 `.tally`(`수상 <b>24</b>`), `#awards` 의 `.sec-meta`(`24건 · 2017–2026`),
+> 그리고 **공유 미리보기 카드**(`assets/images/og-card.jpg`). 아래 스크립트는 `.tally` 만 검사하므로 `.sec-meta` 는 눈으로 확인하고,
+> 카드는 `.tally` 를 고친 뒤 **`node tools/og-card.js` 로 다시 만듭니다**(숫자를 `.tally` 에서 읽습니다).
+> 카드는 한 달 넘게 `수상 23` 으로 남아 있었습니다 — 링크를 공유하면 사이트보다 먼저 보이는 이미지입니다.
 | 발표·논문 | 논문 목록 행 수 | **6** |
 | 연구·커뮤니티 | 경험 목록 행 수 | **6** |
 | 자격 | 자격 목록 중 **`만료` 배지가 없는 것만** | 7건 중 만료 2건 제외 = **5** |
@@ -948,7 +950,7 @@ EOF
 ```bash
 cd site && python3 -m http.server 8080 & sleep 1 && node - <<'EOF'
 const {webkit}=require('playwright');const fs=require('fs');
-const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' | sed 's|^./||'").toString().trim().split('\n');
+const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' -not -path './tools/*' | sed 's|^./||'").toString().trim().split('\n');
 (async()=>{const b=await webkit.launch();
  for(const W of [320,360,375,390,412,420]){
   const c=await b.newContext({viewport:{width:W,height:9000},isMobile:true,hasTouch:true});const p=await c.newPage();
@@ -1122,6 +1124,8 @@ EOF
 - [ ] `index.html`의 요약과 상세 페이지 본문 내용이 일치하는가 (자동 검사 대상 아님)
 - [ ] masthead `.mini-ledger` 의 진행 중·최근 수상이 최신인가 (3-1 표 참고)
 - [ ] 수상·논문·경험을 늘렸다면 **3-6 검산 스크립트를 그대로** 돌렸는가 — `#about` 의 `.tally` 와 `#awards` 의 `.sec-meta` 는 **서로 다른 두 곳**이다. 한쪽만 고치고 넘어간 적이 있다
+- [ ] 수상·논문·자격 집계가 바뀌었다면 **`node tools/og-card.js`** 로 공유 카드를 다시 만들었는가 (3-6)
+- [ ] 첫 화면에 걸리는 본문 그림에 `loading="lazy"` 가 없는가 — 논문 6쪽은 제목 바로 아래 그림이라 `fetchpriority="high"` 로 둡니다. Lighthouse 가 "LCP 그림 lazy" 로 감점합니다
 - [ ] **모바일 점검 스크립트**(4장 `모바일 가독성`)를 돌려 6개 폭에서 다섯 지표가 모두 0 인가
 - [ ] Lighthouse 는 **프리셋 없이**(기본 = 모바일, 느린 4G + CPU 4배 감속) 돌렸는가. `--preset=mobile` 은 없는 값입니다 — 데스크톱은 `--preset=desktop`. 같은 페이지도 회차마다 10점 가까이 흔들리므로 **2회 이상** 재고, 변경 전후 비교는 같은 조건의 로컬 서버로 합니다
 - [ ] 새 그림이 `.doc-figure-link` 로 감싸져 있는가 (3-4-3)

@@ -381,6 +381,14 @@ for folder,sec in [('experience','03'),('projects','04')]:
 
 수상(Award) 항목을 추가할 때는 3단계에서 `case-log`가 아니라 `award-list` 안의 `<a class="award-row reveal">` 블록 형식을 따릅니다 (`index.html` 안 `#awards` 섹션 참고).
 
+### 3-3-1. 상세 페이지를 나누거나 없앨 때 — 옛 주소 남기기
+
+증빙 저장소 인덱스나 외부에 공유한 링크가 옛 주소를 가리킬 수 있어, 파일을 지우지 않고 **이동 페이지**로 바꿉니다.
+`<meta http-equiv="refresh" content="0; url=../index.html#awards">` 와 `<meta name="robots" content="noindex">` 를 넣고,
+본문에는 새 페이지 링크만 둡니다. 이동 페이지는 sitemap·canonical·링크 검사에서 자동으로 빠집니다(5장 스크립트).
+
+예: `awards/digital-criminal-finder.html` — 제8~11회를 한 페이지에 묶었던 옛 주소. 2026.10 에 회차별 `digital-criminal-finder-{8,9,10,11}.html` 로 나눴습니다.
+
 ### 3-4. 상세 페이지에 "관련 자료" 연결하기
 
 각 상세 페이지의 `doc-body` 아래에는 아래와 같은 `doc-related` 블록을 넣어 다른 페이지나 실제 파일로 연결할 수 있습니다.
@@ -659,7 +667,7 @@ cp <새-사진-경로> site/assets/images/profile.jpeg
 
 | 표기 | 산출식 | 현재 |
 |---|---|---|
-| 수상 | 본문 목록 행 − 디범찾 1행 + 디범찾 개별 건수 + 부록 건수 | 11 + 4 + 9 = **24** |
+| 수상 | 본문 목록 행 + 부록 건수 (디지털 범인을 찾아라는 2026.10 부터 회차별 4행으로 분리) | 15 + 9 = **24** |
 
 > 같은 숫자가 **세 곳**에 적힙니다 — `#about` 의 `.tally`(`수상 <b>24</b>`), `#awards` 의 `.sec-meta`(`24건 · 2017–2026`),
 > 그리고 **공유 미리보기 카드**(`assets/images/og-card.jpg`). 아래 스크립트는 `.tally` 만 검사하므로 `.sec-meta` 는 눈으로 확인하고,
@@ -677,10 +685,9 @@ cd site && python3 -c "
 import re, glob
 h=open('index.html',encoding='utf-8').read()
 main=len(re.findall(r'<a class=\"award-row', re.search(r'<div class=\"award-list\".*?\n        </div>',h,re.S).group(0)))
-dcf=len(re.findall(r'제\d+회 \(20\d\d\)', open('awards/digital-criminal-finder.html',encoding='utf-8').read()))
 apx=len(re.findall(r'<div class=\"case-row', open('awards/other-awards.html',encoding='utf-8').read()))
 certs=re.findall(r'<li class=\"reveal\">(.*?)</li>', re.search(r'cert-list.*?</ul>',h,re.S).group(0), re.S)
-calc={'수상': main-1+dcf+apx, '발표·논문': len(re.findall(r'<a class=.pub-item', h)),
+calc={'수상': main+apx, '발표·논문': len(re.findall(r'<a class=.pub-item', h)),
       '연구·커뮤니티': len(re.findall(r'case-row[^\"]*\"[^>]*href=\"experience/', h)),
       '자격': len([c for c in certs if 'expired' not in c])}
 for k,v in calc.items():
@@ -971,7 +978,7 @@ EOF
 ```bash
 cd site && python3 -m http.server 8080 & sleep 1 && node - <<'EOF'
 const {webkit}=require('playwright');const fs=require('fs');
-const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' -not -path './tools/*' | sed 's|^./||'").toString().trim().split('\n');
+const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' -not -path './tools/*' | xargs grep -L 'http-equiv=.refresh' | sed 's|^./||'").toString().trim().split('\n');
 (async()=>{const b=await webkit.launch();
  for(const W of [320,360,375,390,412,420]){
   const c=await b.newContext({viewport:{width:W,height:16000},isMobile:true,hasTouch:true});const p=await c.newPage();
@@ -1089,7 +1096,8 @@ print('12px 미만:', bad or '없음')
 ```bash
 cd site && python3 - <<'EOF'
 import re, os, glob
-pages = sorted(f for f in glob.glob('*.html') + glob.glob('*/*.html') if not f.startswith('tools/'))   # tools/ 는 생성 도구 — 사이트 페이지가 아님
+pages = sorted(f for f in glob.glob('*.html') + glob.glob('*/*.html') if not f.startswith('tools/')   # tools/ 는 생성 도구 — 사이트 페이지가 아님
+                and 'http-equiv="refresh"' not in open(f, encoding='utf-8').read())     # 옛 주소 이동 페이지 (3-3-1)
 
 # ① 내부 링크가 실제 파일을 가리키는지
 bad = []
@@ -1181,7 +1189,7 @@ done
 cd site && python3 - <<'EOF'
 import glob, subprocess
 d = subprocess.run(['git','log','-1','--format=%cs'], capture_output=True, text=True).stdout.strip()
-pages = sorted(f for f in set(glob.glob('*.html') + glob.glob('*/*.html')) - {'404.html'} if not f.startswith('tools/'))
+pages = sorted(f for f in set(glob.glob('*.html') + glob.glob('*/*.html')) - {'404.html'} if not f.startswith('tools/') and 'http-equiv="refresh"' not in open(f, encoding='utf-8').read())
 locs = ['https://info.yeopeva.me/' + ('' if p == 'index.html' else p) for p in pages]   # canonical 과 동일하게 index 는 루트
 body = '\n'.join(f'  <url>\n    <loc>{l}</loc>\n    <lastmod>{d}</lastmod>\n  </url>' for l in locs)
 open('sitemap.xml','w',encoding='utf-8').write(
@@ -1201,7 +1209,7 @@ cd site && python3 - <<'EOF'
 import re, glob
 bad=[]
 for f in sorted(glob.glob('*.html')+glob.glob('*/*.html')):
-    if f == '404.html' or f.startswith('tools/'): continue
+    if f == '404.html' or f.startswith('tools/') or 'http-equiv="refresh"' in open(f, encoding='utf-8').read(): continue
     s = open(f, encoding='utf-8').read()
     exp = '' if f == 'index.html' else f
     for tag, pat in [('canonical', r'rel="canonical" href="https://info\.yeopeva\.me/([^"]*)"'),
@@ -1337,7 +1345,7 @@ const puppeteer=require('puppeteer-core'); const {AxePuppeteer}=require('@axe-co
 const fs=require('fs'), path=require('path'); const pages=[];
 for(const f of fs.readdirSync('.')) if(f.endsWith('.html')) pages.push('/'+f);
 for(const d of ['experience','projects','awards','publications','education'])
-  for(const f of fs.readdirSync(d)) if(f.endsWith('.html')) pages.push('/'+d+'/'+f);
+  for(const f of fs.readdirSync(d)) if(f.endsWith('.html')&&!fs.readFileSync(d+'/'+f,'utf8').includes('http-equiv')) pages.push('/'+d+'/'+f);
 (async()=>{
   const b=await puppeteer.launch({executablePath:process.env.CHROME_PATH,headless:'new',args:['--no-sandbox']});
   let total=0;

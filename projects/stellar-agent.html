@@ -72,7 +72,7 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">04.02&nbsp;· Project</p>
+      <p class="doc-label">04.01&nbsp;· Project</p>
       <div class="doc-meta-row">
         <span class="doc-date">2025.03 – 2025.12</span>
         <span class="doc-tag">AI Agent&nbsp;· DevSecOps</span>
@@ -86,8 +86,8 @@
           <li><b>문제</b> — 정적 분석(SAST) 도구는 런타임 컨텍스트가 없어 오탐이 많고, 수동 감사는 반복 검증에 따른 피로와 대규모 인프라에서의 확장성 부재라는 한계가 있었습니다.</li>
           <li><b>접근</b> — Checkov·KICS·Trivy 등 룰셋 기반 스캐너로 넓게 훑고, AI 에이전트가 그 결과를 맥락에 맞춰 다시 판단하는 2단 구조로 설계했습니다.</li>
           <li><b>구조</b> — JSON-RPC 기반 모델 컨텍스트 프로토콜(MCP)을 에이전트 제어 평면(Agentic Control Plane)으로 두고, AI가 여러 스캐닝 도구와 지식 베이스를 직접 오케스트레이션하도록 했습니다.</li>
-          <li><b>정확도 보강</b> — RAG 엔진으로 최신 CVE와 조직 내부 컴플라이언스 정책을 실시간 참조해, 단순 결함 탐지를 넘어 정량화된 위험 영향도와 우선순위가 지정된 수정 권고안을 만듭니다.</li>
-          <li><b>담당</b> — IaC 분석 파트를 맡아 룰셋 기준 감사 흐름을 구현했고, SBOM·분석 보고서 생성 흐름을 구성했습니다. 학술대회 논문 작성에도 참여했습니다.</li>
+          <li><b>지식 참조</b> — RAG 엔진으로 CVE 정보와 조직 내부 컴플라이언스 정책을 참조해, 위험 영향도와 우선순위를 붙인 수정 권고안을 만들도록 설계했습니다.</li>
+          <li><b>담당</b> — 팀에서 IaC 파트를 맡아, IaC 파일을 SBOM으로 바꾸는 도구의 <b>CloudFormation 파서</b>(문법 검증, <code>!Ref</code>·<code>!GetAtt</code>·<code>!Sub</code> 태그 처리, Parameters·Mappings·Conditions 변수 추출)를 구현했고 스캐너 연동 일부에 참여했습니다. 학술대회 논문에는 공저자로 이름을 올렸습니다.</li>
         </ul>
         <p class="doc-note">2025 SCHU AI &amp; SW Festival SW 프로젝트 경진대회 대상 <span class="nb">(작품번호 SW-20)&nbsp;·</span> 2025 한국데이터사이언스학회 동계 종합학술대회 발표&nbsp;· 논문번호 0032, p.118</p>
       </div>
@@ -97,7 +97,7 @@
     <aside class="doc-aside">
       <p class="doc-aside-title">관련 자료</p>
       <ul class="doc-related-list">
-        <li><a href="https://github.com/Stellar-Agent" target="_blank" rel="noopener"><span class="kind">GitHub</span>Stellar-Agent 조직 저장소</a></li>
+        <li><a href="https://github.com/Stellar-Agent" target="_blank" rel="noopener"><span class="kind">GitHub</span>Stellar-Agent 조직 (저장소 비공개)</a></li>
           <li><a href="../awards/schu-ai-sw-festival-2025.html"><span class="kind">Award</span>2025 SCHU AI &amp; SW Festival SW 프로젝트 경진대회 대상</a></li>
           <li><a href="../publications/stellar-agent-paper.html"><span class="kind">Paper</span>Stellar-Agent: IaC 룰셋 및 MCP를 통합한 하이브리드 DevSecOps 정책 감사 프레임워크</a></li>
       </ul>
@@ -105,7 +105,7 @@
     </div>
 
     <nav class="detail-pager">
-      <a class="pager-prev" href="malware-yara.html">← 이전 항목<br><span>악성코드 분석 &amp; YARA 룰 작성</span></a>
+      <span></span>
       <a class="pager-next" href="dfir-competitions.html">다음 항목 →<br><span>디지털 포렌식&nbsp;· 침해대응 경진대회 분석</span></a>
     </nav>
   </div>

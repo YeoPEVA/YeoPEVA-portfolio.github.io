@@ -72,7 +72,7 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">04.05&nbsp;· Project</p>
+      <p class="doc-label">04.04&nbsp;· Project</p>
       <div class="doc-meta-row">
         <span class="doc-date">2023.09 – 2024.02</span>
         <span class="doc-tag">Forensic Tool</span>
@@ -84,8 +84,8 @@
         <p>analyzeMFT 를 기반으로 MFT 파서를 분석하고 개선한 프로젝트입니다. i-Keeper CERT팀에서 NTFS 파일시스템 구조를 먼저 정리한 뒤 도구 쪽으로 넘어갔습니다.</p>
         <ul class="doc-list">
           <li><b>선행 학습</b> — NTFS 파일시스템과 $MFT 구조를 파트별 보고서로 정리하고, 그 내용을 도구 개선의 기준으로 삼았습니다.</li>
-          <li><b>파싱 검증</b> — $MFT 레코드의 $STANDARD_INFORMATION·$FILE_NAME 타임스탬프를 대조해 파싱 결과의 정확성을 확인했습니다.</li>
-          <li><b>개선</b> — CLI 전용이던 도구에 <b>GUI 를 추가</b>하고, 분석 결과를 다시 쓰기 쉽도록 <b>JSON 출력을 손봤습니다.</b> 도구 개발에 필요한 테스트 코드와 파일 생성 스크립트도 별도로 관리했습니다.</li>
+          <li><b>해석 검토</b> — $MFT 레코드의 $STANDARD_INFORMATION·$FILE_NAME 타임스탬프를 대조해 파싱 결과를 어떻게 읽어야 하는지 검토했습니다.</li>
+          <li><b>개선</b> — CLI 전용이던 도구에 <b>PyQt GUI를 구현</b>하고, <b>JSON 출력</b>에서 레코드 유형이 없을 때의 예외 처리를 보강했습니다.</li>
           <li><b>남은 과제</b> — LaTeX 보고서 자동 생성, $MFT 결과 검색 기능, 그리고 원본 도구에 이슈로 올라와 있는 $ATTRIBUTE_LIST 처리 개선이 다음 작업으로 남아 있습니다.</li>
         </ul>
       </div>

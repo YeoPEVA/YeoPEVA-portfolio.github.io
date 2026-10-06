@@ -197,6 +197,7 @@ site/
 │   ├── images/                # 프로필 사진, 파비콘
 │   ├── resume/                 # 다운로드용 이력서 PDF (국문/영문)
 │   └── reports/                # 수상·자격·교육·활동 증빙 이미지 (71개)
+├── tools/                     # 생성 도구 — og-card(공유 카드) · whitehat-errata(정정본 PDF). robots 차단
 ├── robots.txt / sitemap.xml   # 검색엔진용 — 도메인 변경 시 함께 수정
 ├── CNAME / .nojekyll          # GitHub Pages 설정
 ├── nginx.conf                 # 404 처리, gzip, 캐시 정책 (웹 루트에는 노출 안 됨)
@@ -307,6 +308,9 @@ docker run --rm -p 8080:80 changyeob-lee-portfolio
 2. 종료된 항목끼리는 **종료일 내림차순**.
 3. 종료일이 같으면 **시작일 내림차순**.
 
+> **예외 — `#projects` 의 진행 중 연구는 맨 뒤에 둡니다.** 악성코드·YARA(2025.09 – 현재)는 결과물이 아직 없어, 진행 중이라도 완료된 분석보다 앞에 두지 않습니다.
+> 나머지 프로젝트는 위 규칙(종료일 내림차순)을 따릅니다. 아래 정렬 검사는 그래서 `experience`·`education` 만 봅니다.
+
 시작일 기준으로 정렬하면 안 됩니다. 예를 들어 부산소프트웨어마이스터고(2023.04 –, **진행 중**)는
 시작일이 가장 이르지만 진행 중이므로 이미 끝난 i-Keeper(– 2024.07)보다 **위**에 옵니다.
 진행 중인 항목끼리는 시작일 내림차순이라 HSPACE(2025.10 –)·SCH(2025.09 –) **아래**입니다.
@@ -332,7 +336,7 @@ def key(d):
         if b and len(m)>=2: return (b//10000)*10000+int(m[0])*100+int(m[1])
     if len(p)>1 and '현재' in p[1]: return 10**9
     a=n(p[0]); return n(p[1],a) if len(p)>1 else a
-for sec,sel in [('experience','case-date'),('projects','case-date'),('education','edu-time')]:
+for sec,sel in [('experience','case-date'),('education','edu-time')]:   # projects 는 진행 중 연구를 맨 뒤에 두는 예외 (위 참고)
     blk=re.search(r'id=\"%s\".*?</section>'%sec,s,re.S).group(0)
     ds=re.findall(sel+r'[^>]*>([^<]+)<',blk); ks=[key(d) for d in ds]
     bad=[i for i in range(1,len(ks)) if (ks[i-1] or 0)<(ks[i] or 0)]
@@ -613,6 +617,23 @@ const walk = (d, o = []) => { for (const f of fs.readdirSync(d)) { const q = pat
 "
 ```
 
+### 3-4-4. 공개한 풀이 PDF 를 정정할 때 (`tools/whitehat-errata.*`)
+
+대회 당시 제출본은 **고치지 않고 보존**합니다. 정정은 앞에 정정 노트 쪽을 붙인 별도 파일로 만듭니다.
+
+```bash
+cd site && node tools/whitehat-errata.js
+# → tools/whitehat-errata.html 을 Chromium 으로 PDF 화한 뒤, 원본 7쪽을 그대로 뒤에 붙여
+#   assets/reports/projects/whitehat-2025-writeup-corrected.pdf (8쪽) 를 만듭니다.
+```
+
+- 상세 페이지의 **기본 링크는 정정본**, 원본은 "대회 당시 제출본 (원문 그대로)" 로 아래에 둡니다. 두 링크 모두 KB 표기를 맞춥니다 (푸시 전 6번).
+- 정정 항목을 추가하면 `whitehat-errata.html` 의 표와, 상세 페이지 본문·그림 캡션을 함께 고칩니다.
+- **틀린 서술이 그대로 보이는 원문 캡처는 본문 그림으로 쓰지 않습니다.** 캡션으로 정정해도 오류가 먼저 눈에 띕니다. 원문은 PDF 에만 두고, nginx 문서 대조 그림(`whitehat-2025-nginx-module.webp`)은 그래서 뺐습니다.
+- **한계는 한 곳에 모읍니다.** 본문은 확인한 것만 쓰고, 확인하지 못한 것은 항목 끝 `한계` 한 줄에 모읍니다. 아무도 묻지 않을 "하지 않은 일"은 적지 않습니다.
+- **분석 문장은 확인한 범위까지만** 씁니다. 후보를 찾은 것과 확정한 것, 요청이 있었던 것과 실행된 것, 등록된 것과 반복 실행된 것을 나눠 적습니다.
+- `tools/` 는 `robots.txt` 에서 크롤링을 막아 두었습니다 (URL 로는 열립니다).
+
 ### 3-5. 프로필 사진 교체
 
 사진은 `assets/images/profile.jpeg` 한 파일만 씁니다. 같은 경로에 덮어쓰면 바로 반영됩니다.
@@ -628,7 +649,7 @@ cp <새-사진-경로> site/assets/images/profile.jpeg
 
 ### 3-6. 이력서 PDF 갱신
 
-`assets/resume/resume_dfir_ko.pdf`, `resume_dfir_en.pdf`는 `latex_resume_template_kor` 레포에서 컴파일된 최신 이력서입니다. 이력서를 갱신하면 이 파일도 함께 교체하고, 내용이 크게 바뀌었다면 `index.html`과 각 상세 페이지도 함께 업데이트하세요.
+`assets/resume/resume_dfir_ko.pdf`, `resume_dfir_en.pdf`는 `latex_resume_template_kor` 레포에서 컴파일된 최신 이력서입니다. 지원서에 첨부하는 2쪽 요약본(`resume_threat_analyst_ko.pdf`)은 그 레포에만 두고 사이트에는 올리지 않습니다. 이력서를 갱신하면 이 파일도 함께 교체하고, 내용이 크게 바뀌었다면 `index.html`과 각 상세 페이지도 함께 업데이트하세요.
 
 ---
 
@@ -674,7 +695,7 @@ print('증빙 이미지', len(glob.glob('assets/reports/awards/*.jpg')), '장 = 
 **태그를 늘리는 방향으로 손대지 마세요.** 처음에는 6개 행 30개 태그였는데,
 `Windows Artifact`·`MFT`·`Registry`·`Prefetch`·`Event Log` 처럼 한 역량의 하위 항목이
 따로 태그가 되고, `IoC 정리`·`분석 보고서 작성`·`CloudGoat 학습` 처럼 역량이 아닌 것이 섞여
-"무엇을 실제로 할 수 있는지"가 읽히지 않았습니다. 지금은 **4행 19태그**입니다.
+"무엇을 실제로 할 수 있는지"가 읽히지 않았습니다. 지금은 **4행 18태그**입니다 (2026.10 — 근거 사례가 훈련 설계뿐이던 `메모리 분석` 을 뺐습니다. 이력서 기술 행에서도 함께 뺐습니다).
 
 | 규칙 | 내용 |
 |---|---|
@@ -943,7 +964,7 @@ for f in glob.glob('*.html')+glob.glob('*/*.html'):
 EOF
 ```
 
-**점검** — 아래는 6개 폰 폭에서 다섯 지표가 모두 0 이어야 합니다. `height:9000` 은 일부러입니다 —
+**점검** — 아래는 6개 폰 폭에서 다섯 지표가 모두 0 이어야 합니다. `height:16000` 은 일부러입니다 (320px 에서 홈이 약 13000px — 9000 으로 두었다가 경계에 걸린 링크를 오탐한 적이 있습니다) —
 뷰포트 밖 요소는 `elementFromPoint` 가 `null` 을 돌려줘 **누르는 높이를 잴 수 없고, 그러면 글자 상자
 높이가 그대로 찍혀 통과한 것처럼 보입니다.** 실제로 그렇게 한 번 잘못 판정했습니다.
 
@@ -953,7 +974,7 @@ const {webkit}=require('playwright');const fs=require('fs');
 const pages=require('child_process').execSync("find . -name '*.html' -not -path './node_modules/*' -not -path './tools/*' | sed 's|^./||'").toString().trim().split('\n');
 (async()=>{const b=await webkit.launch();
  for(const W of [320,360,375,390,412,420]){
-  const c=await b.newContext({viewport:{width:W,height:9000},isMobile:true,hasTouch:true});const p=await c.newPage();
+  const c=await b.newContext({viewport:{width:W,height:16000},isMobile:true,hasTouch:true});const p=await c.newPage();
   const t={dot:0,glued:0,tiny:0,ovf:0,tap:0};
   for(const u of pages){
    await p.goto('http://127.0.0.1:8080/'+u,{waitUntil:'domcontentloaded'});
@@ -1068,7 +1089,7 @@ print('12px 미만:', bad or '없음')
 ```bash
 cd site && python3 - <<'EOF'
 import re, os, glob
-pages = sorted(glob.glob('*.html') + glob.glob('*/*.html'))
+pages = sorted(f for f in glob.glob('*.html') + glob.glob('*/*.html') if not f.startswith('tools/'))   # tools/ 는 생성 도구 — 사이트 페이지가 아님
 
 # ① 내부 링크가 실제 파일을 가리키는지
 bad = []
@@ -1160,7 +1181,7 @@ done
 cd site && python3 - <<'EOF'
 import glob, subprocess
 d = subprocess.run(['git','log','-1','--format=%cs'], capture_output=True, text=True).stdout.strip()
-pages = sorted(set(glob.glob('*.html') + glob.glob('*/*.html')) - {'404.html'})
+pages = sorted(f for f in set(glob.glob('*.html') + glob.glob('*/*.html')) - {'404.html'} if not f.startswith('tools/'))
 locs = ['https://info.yeopeva.me/' + ('' if p == 'index.html' else p) for p in pages]   # canonical 과 동일하게 index 는 루트
 body = '\n'.join(f'  <url>\n    <loc>{l}</loc>\n    <lastmod>{d}</lastmod>\n  </url>' for l in locs)
 open('sitemap.xml','w',encoding='utf-8').write(
@@ -1180,7 +1201,7 @@ cd site && python3 - <<'EOF'
 import re, glob
 bad=[]
 for f in sorted(glob.glob('*.html')+glob.glob('*/*.html')):
-    if f == '404.html': continue
+    if f == '404.html' or f.startswith('tools/'): continue
     s = open(f, encoding='utf-8').read()
     exp = '' if f == 'index.html' else f
     for tag, pat in [('canonical', r'rel="canonical" href="https://info\.yeopeva\.me/([^"]*)"'),
@@ -1220,7 +1241,8 @@ grep -rIn --include='*.html' --include='*.css' --include='*.js' \
   -E "01[016789][-. ]?[0-9]{3,4}[-. ]?[0-9]{4}|$BIRTH|\b20[0-9]{6}\b|/Users/" . || echo "깨끗"
 
 # 2) reports 에 PDF 원본이 섞이지 않았는지 (텍스트 추출로 마스킹 우회 가능)
-find assets/reports -name '*.pdf' | grep . && echo "⚠️ PDF 제거 필요" || echo "PDF 없음"
+#    예외: 화이트햇 풀이 발췌 2개 — 본인이 작성한 풀이 문서라 텍스트 층을 유지합니다 (whitehat-2025-writeup*.pdf)
+find assets/reports -name '*.pdf' ! -name 'whitehat-2025-writeup*.pdf' | grep . && echo "⚠️ PDF 제거 필요" || echo "PDF 없음"
 
 # 3) 이미지 메타데이터 잔존 여부
 python3 -c "
@@ -1402,8 +1424,8 @@ s=open('index.html',encoding='utf-8').read()
 i=s.find('id=\"skills\"'); b=s[i:s.find('<section',i+10)]
 rows=[]
 for m in re.finditer(r'<h3>(.*?)</h3>([\s\S]*?)(?=<span class=\"skill-index\">|<dl class=\"skill-foot)',b):
-    rows.append((html.unescape(m.group(1)),
-                 [html.unescape(x) for x in re.findall(r'class=\"tag\">(.*?)</span>',m.group(2))]))
+    rows.append((html.unescape(m.group(1)).replace('\\xa0',' '),   # 제목·태그의 &nbsp; 를 공백으로
+                 [html.unescape(x).replace('\\xa0',' ') for x in re.findall(r'class=\"tag\">(.*?)</span>',m.group(2))]))
 tex=open('../cv/latex_resume_template_kor/resume/tex/resume_dfir_ko.tex',encoding='utf-8').read()
 sk=dict(re.findall(r'\\\\resumeSkill\{([^}]*)\}\{([^}]*)\}',tex))
 NAME={'디지털 포렌식 · 침해대응':'디지털 포렌식 · 침해대응 (DFIR)'}

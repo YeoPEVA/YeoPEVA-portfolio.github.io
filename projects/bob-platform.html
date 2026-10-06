@@ -72,7 +72,7 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">04.06&nbsp;· Project</p>
+      <p class="doc-label">04.05&nbsp;· Project</p>
       <div class="doc-meta-row">
         <span class="doc-date">2020.09 – 2020.12</span>
         <span class="doc-tag">Backend&nbsp;· Research</span>
@@ -87,8 +87,8 @@
           <li><b>크롤러</b> — 중고나라·번개장터·당근마켓 3사를 각각 다르게 다뤘습니다. 중고나라는 로그인이 필요해 Selenium 을 쓰되 게시물 번호 순회가 비효율적이라 <b>인기 사기 품목 게시판 21개</b>로 대상을 좁혔고, 번개장터는 클래스 값이 수시로 바뀌어 <b>자동 갱신 스크립트</b>를 붙였습니다. 당근마켓은 requests 로 처리했습니다.</li>
           <li><b>성능·차단 대응</b> — Selenium 의존을 줄이고 멀티프로세싱을 적용했으며, 계정 보호 조치가 걸리면 크롤러를 중단하고 로그를 남기도록 했습니다. 차단 우회를 위해 프록시를 별도로 운영했습니다.</li>
           <li><b>데이터</b> — 플랫폼별 스키마를 나눠 MySQL 에 저장하고, 일정 건수마다 pandas 로 일괄 INSERT 해 쓰기 부하를 줄였습니다.</li>
-          <li><b>ELK</b> — Logstash 가 느려 <b>go-mysql-elasticsearch 로 대체</b>했고, Elasticsearch·Kibana 7.10.0 으로 사기 의심 매물·패턴·월별·플랫폼별 대시보드를 만들었습니다. 접속 때마다 동기화하면 부하가 커져 <b>10분 주기 사전 동기화</b>로 바꿨습니다. Elasticsearch 자연어 처리로 상품명을 태깅하고 시세 수집도 자동화했습니다.</li>
-          <li><b>판별 근거</b> — 판매자와 직접 접촉해 확보한 <b>검증된 사기 매물 101건</b>에서 패턴을 뽑았고, 비정상 가격은 3시그마 규칙으로 판단했습니다. 적용 전 에어팟 프로 가격 약 500건으로 Q-Q Plot 과 Shapiro-Wilk 검정을 거쳐 정규성을 확인했습니다.</li>
+          <li><b>ELK</b> — MySQL→Elasticsearch 동기화를 Logstash 대신 <b>go-mysql-elasticsearch로 구성</b>했고, Elasticsearch·Kibana 7.10.0 으로 사기 의심 매물·패턴·월별·플랫폼별 대시보드를 만들었습니다. 접속 때마다 동기화하면 부하가 커져 <b>10분 주기 사전 동기화</b>로 바꿨습니다. Elasticsearch 자연어 처리로 상품명을 태깅하고 시세 수집도 자동화했습니다.</li>
+          <li><b>판별 근거</b> — 팀이 판매자에게 직접 연락해 <b>사기로 확인한 매물 101건</b>에서 패턴을 뽑았고, 평균에서 −2σ 밖의 가격을 이상 가격으로 봤습니다. 가격이 정규분포를 따르지 않아 이 기준은 <b>후보를 고르는 데만</b> 썼고, 기준에 걸린 133건 중 33건(24.8%)이 실제 사기였습니다.</li>
           <li><b>결과</b> — 2020.09.07 – 12.21 진행, BoB 9기 디지털포렌식 트랙에서 TOP 14 자문단 평가까지 진출했고, 결과를 KCI 등재 논문(경찰학연구)과 한국정보보호학회 동계학술대회 발표로 확장했습니다.</li>
         </ul>
       </div>
@@ -107,7 +107,7 @@
 
     <nav class="detail-pager">
       <a class="pager-prev" href="mft-parser.html">← 이전 항목<br><span>MFT Parser 분석 &amp; 개선</span></a>
-      <span></span>
+      <a class="pager-next" href="malware-yara.html">다음 항목 →<br><span>악성코드 분석 &amp; YARA 룰 작성</span></a>
     </nav>
   </div>
 </main>

@@ -72,7 +72,7 @@
 
     <div class="doc-layout">
     <article class="doc">
-      <p class="doc-label">04.04&nbsp;· Project</p>
+      <p class="doc-label">04.03&nbsp;· Project</p>
       <div class="doc-meta-row">
         <span class="doc-date">2025.07.08 – 2025.11.07</span>
         <span class="doc-tag">DFIR&nbsp;· CTF</span>
@@ -90,23 +90,18 @@
 
         <h2 class="section-title" style="margin-top:40px">대표 문제 풀이 — 화이트햇 콘테스트 2025 예선</h2>
         <span class="rule is-in"></span>
-        <p style="margin-top:18px">국방부 주최 화이트햇 콘테스트 예선(2025.10.18, 대학생부 4등·본선 진출)에서 <b>포렌식 파트를 담당</b>했습니다. 아래는 직접 푼 두 문제입니다.</p>
+        <p style="margin-top:18px">국방부 주최 화이트햇 콘테스트 예선(2025.10.18, 팀 대학생부 4위·본선 진출)에서 <b>포렌식 파트를 담당</b>했습니다. 아래는 직접 푼 두 문제입니다.</p>
         <ul class="doc-list">
-          <li><b>시나리오 1-3&nbsp;· 백도어 경로 특정</b> — 앞선 시나리오에서 확인된 PyYAML 역직렬화 취약점(CVE-2020-14343)으로 침투가 이뤄졌다는 전제 위에서, 리눅스 디스크 이미지의 <code>log/nginx/access.log</code> 를 먼저 봤습니다. 다른 요청과 IP 대역이 다르고 <code>curl</code> 로 접근한 <code>GET /bd</code> 한 건이 눈에 띄어 nginx 쪽을 의심했고, <code>/usr/lib/nginx/modules/</code> 에서 <b>기본 빌드에 포함되지 않는</b> <code>ngx_http_secure_headers_module.so</code> 가 원본보다 크고 수정 시각도 침투 시점과 맞아 백도어로 확정했습니다.</li>
-        </ul>
-        <figure class="doc-figure">
-          <a class="doc-figure-link" href="../assets/figures/whitehat-2025-nginx-module.webp" target="_blank" rel="noopener"><img src="../assets/figures/whitehat-2025-nginx-module.webp" alt="nginx 모듈 디렉터리와 공식 문서 대조 화면"
-               width="1120" height="1055" loading="lazy" decoding="async"></a>
-          <figcaption><b>모듈 판별.</b> 이름이 비슷한 정식 모듈(<code>ngx_http_secure_link_module</code>)의 문서와 대조해, 기본 빌드에 없는 모듈이 심어졌음을 확인했습니다.</figcaption>
-        </figure>
-        <ul class="doc-list">
-          <li><b>Leakage Investigation&nbsp;· 유출 경로 추적</b> — 단일 pcap 을 zeek 으로 먼저 훑어 <code>weird.log</code> 의 <code>bad_HTTP_request</code> 와 문서용 예약 대역(<code>198.51.100.0/24</code>) 통신을 단서로 의심 IP 를 좁혔습니다. Wireshark 로 해당 IP 를 필터링해 "이미지로 메시지를 보내겠다"는 대화와 PNG 8장을 추출했고, 대화에 적힌 규칙(<b>red 채널 반전&nbsp;· 앞 4자리에 길이 기록</b>)대로 디코딩해 제품명과 날짜를 복원했습니다.</li>
+          <li><b>Leakage Investigation&nbsp;· 유출 경로 추적</b> — 단일 pcap 을 zeek 으로 먼저 훑어 <code>weird.log</code> 의 <code>bad_HTTP_request</code> 와 문서용 예약 대역(<code>198.51.100.0/24</code>) 통신을 단서로 의심 IP 를 좁혔습니다. Wireshark 로 해당 IP 를 필터링해 "이미지로 메시지를 보내겠다"는 대화와 PNG 8장을 추출했고, 대화에 적힌 규칙(<b>red 채널 반전&nbsp;· 앞 4자리에 길이 기록</b>)대로 디코딩해 제품명과 날짜를 복원했습니다. 예약 대역 주소는 조사 단서였고, 유출로 판단한 근거는 대화와 복원 결과입니다.</li>
         </ul>
         <figure class="doc-figure">
           <a class="doc-figure-link" href="../assets/figures/whitehat-2025-stego-chat.webp" target="_blank" rel="noopener"><img src="../assets/figures/whitehat-2025-stego-chat.webp" alt="패킷에서 추출한 raw_strings.txt 대화 내용"
                width="1120" height="1308" loading="lazy" decoding="async"></a>
           <figcaption><b>은닉 규칙.</b> 패킷에서 뽑은 대화가 스테가노그래피 규칙 자체를 담고 있어, 이미지 8장에서 메시지를 복원하는 근거가 됐습니다.</figcaption>
         </figure>
+        <ul class="doc-list">
+          <li><b>시나리오 1-3&nbsp;· 백도어 모듈 경로 특정</b> — 앞선 시나리오에서 확인된 PyYAML 역직렬화 취약점(CVE-2020-14343)으로 침투가 이뤄졌다는 전제 위에서, 리눅스 디스크 이미지의 <code>log/nginx/access.log</code> 를 먼저 봤습니다. 다른 요청과 출발지 IP 가 다르고 <code>curl</code> 로 접근한 <code>GET /bd</code> 한 건을 단서로 nginx 쪽을 살폈습니다. <code>/usr/lib/nginx/modules/</code> 에서 <b>기본 빌드에 없는</b> <code>ngx_http_secure_headers_module.so</code> 를 찾아 <code>strings</code> 등으로 내부 문자열을 확인한 뒤 경로를 제출했고, <b>정답으로 인정됐습니다.</b> 실행 동작까지 분석하지는 않았습니다.</li>
+        </ul>
 
         <h2 class="section-title" style="margin-top:40px">CTF 활동 실적</h2>
         <span class="rule is-in"></span>
@@ -130,7 +125,8 @@
     <aside class="doc-aside">
       <p class="doc-aside-title">관련 자료</p>
       <ul class="doc-related-list">
-        <li><a href="../assets/reports/projects/whitehat-2025-writeup.pdf" download><span class="kind">PDF</span>화이트햇 2025 예선 풀이 발췌 (1-3&nbsp;· Leakage Investigation)<span class="meta">1039 KB</span></a></li>
+        <li><a href="../assets/reports/projects/whitehat-2025-writeup-corrected.pdf" download><span class="kind">PDF</span>화이트햇 2025 예선 풀이 발췌 (정정 노트 포함)<span class="meta">1385 KB</span></a></li>
+          <li><a href="../assets/reports/projects/whitehat-2025-writeup.pdf" download><span class="kind">PDF</span>같은 발췌의 대회 당시 제출본 (원문 그대로)<span class="meta">1039 KB</span></a></li>
           <li><a href="../awards/kfsi-academy-2025.html"><span class="kind">Award</span>금융보안아카데미 2025 최우수상</a></li>
           <li><a href="../education/kfsi-academy-edu.html"><span class="kind">Education</span>금융보안원&nbsp;· 금융보안아카데미 3기 이수 내역</a></li>
       </ul>

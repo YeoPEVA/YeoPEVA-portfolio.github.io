@@ -197,7 +197,7 @@ site/
 │   ├── images/                # 프로필 사진, 파비콘
 │   ├── resume/                 # 다운로드용 이력서 PDF (국문/영문)
 │   └── reports/                # 수상·자격·교육·활동 증빙 이미지 (71개)
-├── tools/                     # 생성 도구 — og-card(공유 카드) · whitehat-errata(정정본 PDF). robots 차단
+├── tools/                     # 생성 도구 — og-card(공유 카드). robots 차단
 ├── robots.txt / sitemap.xml   # 검색엔진용 — 도메인 변경 시 함께 수정
 ├── CNAME / .nojekyll          # GitHub Pages 설정
 ├── nginx.conf                 # 404 처리, gzip, 캐시 정책 (웹 루트에는 노출 안 됨)
@@ -625,18 +625,11 @@ const walk = (d, o = []) => { for (const f of fs.readdirSync(d)) { const q = pat
 "
 ```
 
-### 3-4-4. 공개한 풀이 PDF 를 정정할 때 (`tools/whitehat-errata.*`)
+### 3-4-4. 대회 당시 제출한 보고서를 다룰 때
 
-대회 당시 제출본은 **고치지 않고 보존**합니다. 정정은 앞에 정정 노트 쪽을 붙인 별도 파일로 만듭니다.
+관련 자료에는 **대회 당시 제출한 보고서(발췌)만** 둡니다. 제출본은 고치지 않고, 이후 검토에서 달라진 판단은 **상세 페이지 본문**에 씁니다.
+정정본을 따로 만들어 원본과 나란히 두는 방식은 2026.10 에 써 봤다가 뺐습니다 — 같은 문서가 두 개 놓여 어색했습니다.
 
-```bash
-cd site && node tools/whitehat-errata.js
-# → tools/whitehat-errata.html 을 Chromium 으로 PDF 화한 뒤, 원본 7쪽을 그대로 뒤에 붙여
-#   assets/reports/projects/whitehat-2025-writeup-corrected.pdf (8쪽) 를 만듭니다.
-```
-
-- 상세 페이지의 **기본 링크는 정정본**, 원본은 "대회 당시 제출본 (원문 그대로)" 로 아래에 둡니다. 두 링크 모두 KB 표기를 맞춥니다 (푸시 전 6번).
-- 정정 항목을 추가하면 `whitehat-errata.html` 의 표와, 상세 페이지 본문·그림 캡션을 함께 고칩니다.
 - **틀린 서술이 그대로 보이는 원문 캡처는 본문 그림으로 쓰지 않습니다.** 캡션으로 정정해도 오류가 먼저 눈에 띕니다. 원문은 PDF 에만 두고, nginx 문서 대조 그림(`whitehat-2025-nginx-module.webp`)은 그래서 뺐습니다.
 - **한계는 한 곳에 모읍니다.** 본문은 확인한 것만 쓰고, 확인하지 못한 것은 항목 끝 `한계` 한 줄에 모읍니다. 아무도 묻지 않을 "하지 않은 일"은 적지 않습니다.
 - **분석 문장은 확인한 범위까지만** 씁니다. 후보를 찾은 것과 확정한 것, 요청이 있었던 것과 실행된 것, 등록된 것과 반복 실행된 것을 나눠 적습니다.
@@ -1249,8 +1242,8 @@ grep -rIn --include='*.html' --include='*.css' --include='*.js' \
   -E "01[016789][-. ]?[0-9]{3,4}[-. ]?[0-9]{4}|$BIRTH|\b20[0-9]{6}\b|/Users/" . || echo "깨끗"
 
 # 2) reports 에 PDF 원본이 섞이지 않았는지 (텍스트 추출로 마스킹 우회 가능)
-#    예외: 화이트햇 풀이 발췌 2개 — 본인이 작성한 풀이 문서라 텍스트 층을 유지합니다 (whitehat-2025-writeup*.pdf)
-find assets/reports -name '*.pdf' ! -name 'whitehat-2025-writeup*.pdf' | grep . && echo "⚠️ PDF 제거 필요" || echo "PDF 없음"
+#    예외: 화이트햇 결과보고서 발췌 — 본인이 작성한 풀이 문서라 텍스트 층을 유지합니다 (whitehat-2025-writeup.pdf)
+find assets/reports -name '*.pdf' ! -name 'whitehat-2025-writeup.pdf' | grep . && echo "⚠️ PDF 제거 필요" || echo "PDF 없음"
 
 # 3) 이미지 메타데이터 잔존 여부
 python3 -c "

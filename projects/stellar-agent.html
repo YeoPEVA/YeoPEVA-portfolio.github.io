@@ -83,10 +83,10 @@
       <div class="doc-body">
         <p>룰셋 스캐너와 AI 에이전트를 함께 쓰는 IaC 보안 감사 프레임워크로, 팀 프로젝트입니다.</p>
         <ul class="doc-list">
-          <li><b>문제</b> — 정적 분석(SAST) 도구는 실행 환경 정보가 없어 오탐이 많고, 수동 감사는 인프라가 커질수록 반복 검토 부담이 커집니다.</li>
-          <li><b>접근</b> — Checkov·KICS·Trivy 같은 룰셋 스캐너로 넓게 찾고, AI 에이전트가 그 결과를 맥락에 맞춰 다시 판단하도록 했습니다.</li>
+          <li><b>문제</b> — 정적 분석(SAST) 도구는 실행 환경 정보가 없어 오탐이 많고 수동 감사는 인프라가 커질수록 반복 검토 부담이 커집니다.</li>
+          <li><b>접근</b> — Checkov·KICS·Trivy 같은 룰셋 스캐너로 넓게 찾고 AI 에이전트가 그 결과를 맥락에 맞춰 다시 판단하도록 했습니다.</li>
           <li><b>구조</b> — 에이전트가 MCP(JSON-RPC 기반)로 여러 스캐너와 지식 베이스를 직접 호출하도록 연결했습니다.</li>
-          <li><b>지식 참조</b> — RAG로 CVE 정보와 내부 컴플라이언스 정책을 참조해, 위험도와 우선순위를 붙인 수정 권고안을 만들도록 설계했습니다.</li>
+          <li><b>지식 참조</b> — RAG로 CVE 정보와 내부 컴플라이언스 정책을 참조해 위험도와 우선순위를 붙인 수정 권고안을 만들도록 설계했습니다.</li>
           <li><b>담당</b> — 팀에서 IaC 파트를 맡아, IaC 파일을 SBOM으로 바꾸는 도구의 <b>CloudFormation 파서</b>(문법 검증, <code>!Ref</code>·<code>!GetAtt</code>·<code>!Sub</code> 태그 처리, Parameters·Mappings·Conditions 변수 추출)를 구현했고 스캐너 연동 일부에 참여했습니다. 학술대회 논문에는 공저자로 이름을 올렸습니다.</li>
         </ul>
         <p class="doc-note">2025 SCHU AI &amp; SW Festival SW 프로젝트 경진대회 대상 <span class="nb">(작품번호 SW-20)&nbsp;·</span> 2025 한국데이터사이언스학회 동계 종합학술대회 발표&nbsp;· 논문번호 0032, p.118</p>

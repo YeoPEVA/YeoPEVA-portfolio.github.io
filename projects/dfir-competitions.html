@@ -93,14 +93,15 @@
         <ul class="doc-list">
           <li><b>Web Server 측</b> — <code>/var/log/httpd/access.log</code> 에 남은 <code>search.php?cmd=</code> 명령형 요청 8건을 시간 순으로 정리했습니다. 접근 로그에 기록된 요청 내용은 정찰(<code>whoami</code>·<code>uname -a</code>·<code>cat /etc/passwd</code>) → 파일 내려받기 → <code>chmod 755</code> → 점검 스크립트에 실행 명령 추가 순서였습니다.</li>
           <li><b>웹셸 확인</b> — <code>/var/www/html/search.php</code> 는 base64 로 감싼 한 줄짜리 PHP 웹셸이었고 디코딩 결과가 로그의 <code>?cmd=</code> 파라미터와 맞아 명령이 이 파일로 전달됐음을 확인했습니다.</li>
+          <li><b>결과 확인</b> — 내려받기 요청으로 받은 <code>centreon_module_linux_app64</code> 는 <code>/var/www/html/</code> 에 그대로 있었습니다. <code>/var/www/html/include/tools/check.sh</code> 에는 이 파일을 실행하는 줄이 추가돼 있었습니다. 디스크에 남은 두 파일로 요청이 실제로 실행됐음을 확인했습니다. 내려받기 직후 같은 <code>ls</code> 요청의 응답 크기도 796바이트에서 884바이트로 커졌습니다.</li>
           <li><b>지속성</b> — 내려받은 <code>centreon_module_linux_app64</code> 는 문자열을 검토해 백도어 의심 파일로 분류했고 <code>/var/spool/cron/root</code> 에서 <b>부팅 시 실행 + 매시 01분 실행</b> 등록을 확인했습니다.</li>
           <li><b>Windows 측 (팀원 담당)</b> — RemCom 계열 원격 명령 실행 도구와 RDP 활성화·Defender 비활성화 스크립트가 확인됐습니다. 저는 리눅스(Web Server) 이미지를 맡았습니다.</li>
-          <li><b>한계</b> — 웹셸을 처음 올린 경로, cron 등록 뒤 실제 반복 실행 여부, 내려받은 파일의 실제 동작은 확인하지 못했습니다. 종료 직후 문제 지문에 접근할 수 없어 풀이 과정은 화면 기록 대신 서술로 재구성했습니다.</li>
+          <li><b>한계</b> — 웹셸이 처음 올라온 경로와 cron 등록 이후 백도어가 실제로 실행됐는지는 이미지에서 찾지 못했습니다. 바이너리는 문자열만 확인해 백도어 의심 파일로 분류했습니다. 종료 직후 문제 지문에 접근할 수 없어 풀이 과정은 화면 기록 대신 서술로 재구성했습니다.</li>
         </ul>
         <figure class="doc-figure">
           <a class="doc-figure-link" href="../assets/figures/hccc-2025-weblog.webp" target="_blank" rel="noopener"><img src="../assets/figures/hccc-2025-weblog.webp" alt="HCCC 2025 access.log 의 search.php 명령형 요청 8건"
-               width="1120" height="1027" loading="lazy" decoding="async"></a>
-          <figcaption><b>웹셸 대상 요청 타임라인.</b> 접근 로그의 명령형 요청 8건을 시간 순으로 뽑았습니다. 화살표 순서는 요청 내용의 순서이며 각 명령의 실행 성공을 뜻하지 않습니다.</figcaption>
+               width="1120" height="726" loading="lazy" decoding="async"></a>
+          <figcaption><b>웹셸 대상 요청 타임라인.</b> 접근 로그에 남은 명령형 요청 8건(13:35:37–13:37:12)입니다. 모두 200으로 응답했고 이 중 파일 내려받기와 check.sh 수정은 디스크에 남은 결과 파일로도 확인했습니다.</figcaption>
         </figure>
         <figure class="doc-figure">
           <a class="doc-figure-link" href="../assets/figures/hccc-2025-webshell.webp" target="_blank" rel="noopener"><img src="../assets/figures/hccc-2025-webshell.webp" alt="search.php 웹셸 원문과 base64 디코딩 결과"

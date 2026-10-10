@@ -308,8 +308,7 @@ docker run --rm -p 8080:80 changyeob-lee-portfolio
 2. 종료된 항목끼리는 **종료일 내림차순**.
 3. 종료일이 같으면 **시작일 내림차순**.
 
-> **예외 — `#projects` 의 진행 중 연구는 맨 뒤에 둡니다.** 악성코드·YARA(2025.09 – 현재)는 결과물이 아직 없어, 진행 중이라도 완료된 분석보다 앞에 두지 않습니다.
-> 나머지 프로젝트는 위 규칙(종료일 내림차순)을 따릅니다. 아래 정렬 검사는 그래서 `experience`·`education` 만 봅니다.
+> 2026.10 에 진행 중인 악성코드·YARA 를 프로젝트 맨 뒤로 옮겼다가 되돌렸습니다 — 목록은 **시간순이 맞습니다.**
 
 시작일 기준으로 정렬하면 안 됩니다. 예를 들어 부산소프트웨어마이스터고(2023.04 –, **진행 중**)는
 시작일이 가장 이르지만 진행 중이므로 이미 끝난 i-Keeper(– 2024.07)보다 **위**에 옵니다.
@@ -336,7 +335,7 @@ def key(d):
         if b and len(m)>=2: return (b//10000)*10000+int(m[0])*100+int(m[1])
     if len(p)>1 and '현재' in p[1]: return 10**9
     a=n(p[0]); return n(p[1],a) if len(p)>1 else a
-for sec,sel in [('experience','case-date'),('education','edu-time')]:   # projects 는 진행 중 연구를 맨 뒤에 두는 예외 (위 참고)
+for sec,sel in [('experience','case-date'),('projects','case-date'),('education','edu-time')]:
     blk=re.search(r'id=\"%s\".*?</section>'%sec,s,re.S).group(0)
     ds=re.findall(sel+r'[^>]*>([^<]+)<',blk); ks=[key(d) for d in ds]
     bad=[i for i in range(1,len(ks)) if (ks[i-1] or 0)<(ks[i] or 0)]

@@ -649,7 +649,7 @@ cp <새-사진-경로> site/assets/images/profile.jpeg
 
 ### 3-6. 이력서 PDF 갱신
 
-`assets/resume/resume_dfir_ko.pdf`, `resume_dfir_en.pdf`는 `latex_resume_template_kor` 레포에서 컴파일된 최신 이력서입니다. 지원서에 첨부하는 2쪽 요약본(`resume_threat_analyst_ko.pdf`)은 그 레포에만 두고 사이트에는 올리지 않습니다. 이력서를 갱신하면 이 파일도 함께 교체하고, 내용이 크게 바뀌었다면 `index.html`과 각 상세 페이지도 함께 업데이트하세요.
+`assets/resume/resume_dfir_ko.pdf`, `resume_dfir_en.pdf`는 `latex_resume_template_kor` 레포에서 컴파일된 최신 이력서입니다. 이력서를 갱신하면 두 파일도 함께 교체하고, 내용이 크게 바뀌었다면 `index.html`과 각 상세 페이지도 함께 업데이트하세요.
 
 ---
 

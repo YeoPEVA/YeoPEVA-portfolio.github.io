@@ -81,7 +81,14 @@
       <p class="doc-role">한국포렌식학회장 수여</p>
 
       <div class="doc-body">
-        <p>(사)한국포렌식학회와 한국저작권보호원이 공동주최한 제11회 디지털 범인을 찾아라 경진대회에서 장려상을 받았습니다.</p>
+        <p>(사)한국포렌식학회와 한국저작권보호원이 공동주최한 제11회 디지털 범인을 찾아라 경진대회에서 장려상을 받았습니다. 주니어 부문 과제는 딥페이크 영상 제작·유포 사건이었고 압수 PC의 Windows 이미지(E01)를 분석해 보고서를 냈습니다.</p>
+        <ul class="doc-list">
+          <li><b>제작 경로</b> — Edge 기록·다운로드와 프리패치·LNK·레지스트리 실행 기록을 시간순으로 맞춰 ChatGPT 설치 → deevid.ai 영상 생성 → DeepFaceLab 설치·실행 순서를 세웠습니다.</li>
+          <li><b>ChatGPT 기록</b> — IndexedDB(leveldb)가 도구로 제대로 풀리지 않아 파이썬 코드를 직접 작성해 프롬프트를 복구했습니다. 캐시에 남은 업로드 이미지는 Documents 폴더의 원본 사진과 해시가 같았습니다.</li>
+          <li><b>제작 입증</b> — DeepFaceLab merged 폴더의 프레임은 1,619장이었고 ffprobe로 본 sample.mp4의 프레임 수도 1,619였습니다. 이 PC에서 만든 결과물로 판단했습니다.</li>
+          <li><b>안티포렌식</b> — <code>$LogFile</code>·<code>$UsnJrnl</code>에서 작업 폴더 대량 삭제와 result.mp4 → sample.mp4 이름 변경을 찾았습니다. 파일 생성 시각이 로그와 달라 타임스탬프가 바뀐 것도 확인했습니다.</li>
+          <li><b>한계</b> — deevid.ai 결과물과 DeepFaceLab 입력 영상은 해시가 달라 둘의 연결은 정황으로만 남겼습니다. FSUTIL·VSSVC 실행 목적도 추정입니다.</li>
+        </ul>
       </div>
 
     </article>

@@ -1278,6 +1278,11 @@ code{
 }
 
 @media (max-width: 720px){
+  /* 좁은 화면에서는 제목 옆 부제가 같은 줄에 이어져 "YARA 룰 / 작성", "i- / Keeper" 처럼 끊겼습니다.
+     부제를 제목 아래 줄로 내리고, 줄 앞에 홀로 남는 가운뎃점은 숨깁니다. */
+  .case-body h3 .role{ display: block; margin-top: 3px; }
+  .role-sep{ display: none; }
+
   /* 손가락으로 누르는 화면에서는 아이콘 버튼도 44px 를 확보합니다.
      헤더 높이가 68px 이라 여유가 있습니다. */
   .icon-btn{ min-width: 44px; min-height: 44px; }
